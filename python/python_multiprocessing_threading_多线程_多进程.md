@@ -28,11 +28,11 @@ BTW，协程（又称微线程，纤程。英文名Coroutine）技术现对于�
 
 频繁创建/销毁process或者thread是非常消耗资源的，所以，**使用并发技术时，尽量选择线程池/进程池(pool)**。
 
-Python早期有`threading`（`_thread`模块的包装）支持多线程；然后是`multiprocessing.dummy.Pool`（等同于`multiprocessing.pool.ThreadPool`）进一步包装`threading`；Python3.2+，又引入`concurrent.futures`库，对threading和multiprocessing的进一步抽象（包装）。
+Python早期有`threading`（`_thread`模块的包装）支持多线程,`multiprocessing`支持多进程；然后是`multiprocessing.dummy.Pool`（等同于`multiprocessing.pool.ThreadPool`）进一步包装`threading`，`multiprocessing`同时支持多线程和多进程，而且API相同；Python3.2+，又引入`concurrent.futures`库，对threading和multiprocessing的进一步抽象（包装）。
 
 每一次抽象（包装）之后，提供的接口更加统一、简单、易用，当然灵活性会有一定的损失；比如，`concurrent.futures`库中的参数就一个max_workers，`ThreadPool/Pool`的API中有`processes, initializer，initargs，maxtasksperchild，context`等参数。
 
-应该选择哪个？**这里推荐首选`concurrent.futures`，候选`multiprocessing.(dummy.)Pool`，二者多线程、多进程的API是一样的**，原因：越简单，出错概率越小！坚持使用API更简单的`concurrent.futures`是的项目更容易维护，性能基本上没有损失！！
+应该选择哪个？**这里推荐首选`concurrent.futures`，候选`multiprocessing.(dummy.)Pool`，二者多线程、多进程的API是一样的**； 选择的原因：越简单，出错概率越小！坚持使用API更简单的`concurrent.futures`是的项目更容易维护，性能基本上没有损失！！
 
 参考：  
 [concurrent.futures官网](https://docs.python.org/3.6/library/concurrent.futures.html)  
@@ -104,11 +104,13 @@ def mp_main(primes, nprocs):
                     pool.map(is_prime, primes))}
 ```
 
+**=========以下内容纯为扯淡，喜欢的继续！=========**
+
 ## 为嘛使用多线程、多进程
 
 答：提高效率，节约时间
 
-## 先说说计算机组成
+## 补脑：先说说计算机组成
 
 虽然计算机的发展很迅速，然而从整齐结构上而言其仍属于冯·诺依曼计算机的发展，冯·诺依曼计算机的特征有：
 
@@ -131,9 +133,9 @@ def mp_main(primes, nprocs):
 
 ## 什么是线程、进程？
 
-参考：https://sites.google.com/site/sureshdevang/thread-vs-process
+参考：[thread-vs-process](https://sites.google.com/site/sureshdevang/thread-vs-process)   
 
-- 进程是资源分配单位，线程是CPU调度单位；
+- 进程是**资源分配单位**，线程是**CPU调度单位**；
 - 进程 = 线程 + 共享资源；
 - 进程拥有完整的资源平台，线程只独享必不可少的资源（寄存器、栈）；
 - 进程和线程都具有：就绪、阻塞和执行三种基本状态，状态之间可以转换；
@@ -150,7 +152,7 @@ def mp_main(primes, nprocs):
 
 ![单线程和多线程对比图](http://www.pling.org.uk/cs/opsimg/threadmodel.png)
 
-## python使用多线程还是多进程呢？
+## 项目中使用多线程还是多进程呢？
 
 上面已经说过，多线程的开销比多进程开销更少，而且多进程之间的通讯也比较麻烦；
 
@@ -175,11 +177,6 @@ for _ in range(8):  # 创建了8个线程，电脑是8核的
 
 ![](https://i.loli.net/2017/12/16/5a348c26b29f3.png)
 
-## 协程
-
-参考：[基于协程、异步IO的python爬虫](https://ayonel.me/index.php/2017/05/17/coroutine_spider/)
-参考：https://thief.one/2017/02/20/Python%E5%8D%8F%E7%A8%8B/
-
 ## GIL既然阻止多线程，难道Python多线程无用？
 
 非也！！ 
@@ -194,12 +191,13 @@ for _ in range(8):  # 创建了8个线程，电脑是8核的
 
 - 退一步讲，Python这种高级脚本语言本身的运行效率就很低，CPU bound jobs 使用计算机低级语言（C语言等）效果会更好。
 
-## 在Python中如何处理CPU密集型的任务呢
+## 在Python中如何处理CPU密集型的任务呢？
 
-方法1： 使用 Ctypes 第三方库，Ctypes可以绕过GIL的限制，提升多线程的执行效率；但是并不是所有人都精通C语言，尤其C语言还是不太安全的语言；不会C语言，咋整？
-方法2：Python自带了 multiprocessing 库（多进程）
+方法1：使用 Ctypes 第三方库，Ctypes可以绕过GIL的限制，提升多线程的执行效率；但是并不是所有人都精通C语言，尤其C语言还是不太安全的语言；不会C语言，咋整？    
+方法2：不使用CPython解释器，换其他的Python解释器；  
+方法2：Python自带了 multiprocessing 库（多进程）；    
 
-代码如下：
+multiprocessing库实现多进程代码如下：
 
 ```python
 from multiprocessing import Process
@@ -232,86 +230,29 @@ Python提供的并发编程库如下：
 - multiprocessing.pool.ThreadPool： 多线程库Pool（和multiprocessing.Pool具有相同的API），  
 - multiprocessing.dummy.Pool：等同于 multiprocessing.pool.ThreadPool（别名而已）  
 - concurrent.futures库： Python3.2+支持，实现了对threading和multiprocessing的进一步抽象  
-- 使用map时，future是逐个迭代提交，multiprocessing.Pool是批量提交jobs，因此对于大批量jobs的处理，multiprocessing.Pool效率会更高一些。对于需要长时间运行的作业，用future更佳，future提供了更多的功能（callback, check status, cancel）。
 
-## 并发-多线程
+> 使用map方法时，future库是逐个迭代提交，multiprocessing.Pool是批量提交jobs，因此对于大批量jobs的处理，multiprocessing.Pool效率会更高一些。对于需要长时间运行的作业，用future更佳，future提供了更多的功能（callback, check status, cancel）。
 
-参考：https://juejin.im/post/5845134da22b9d006c2959c3  
-参考：https://tracholar.github.io/wiki/python/python-multiprocessing-tutorial.html
+## 其他参考内容：
 
-## 并发-多进程
+并发-多线程
 
-参考：https://juejin.im/post/5847853661ff4b006c431c64
+参考：[理解Python并发编程一篇就够了 - 线程篇](https://juejin.im/post/5845134da22b9d006c2959c3)  
+参考：[Python 多线程和多进程编程总结](https://tracholar.github.io/wiki/python/python-multiprocessing-tutorial.html)  
 
-## concurrent.futures库
+并发-多进程
 
-参考：https://www.ziwenxie.site/2016/12/24/python-concurrent-futures/  
-参考：https://www.ziwenxie.site/2016/12/19/python-asyncio/  
-参考：http://www.cnblogs.com/dylan-wu/p/7163823.html
-参考：http://lovesoo.org/analysis-of-asynchronous-concurrent-python-module-concurrent-futures.html
+参考：[理解Python并发编程一篇就够了 - 进程篇](https://juejin.im/post/5847853661ff4b006c431c64)  
+参考：[Python进程、线程、协程详解](https://firsh.me/2017/08/07/python-thread/)  
 
+协程
 
-- Executor和Future
+参考：[基于协程、异步IO的python爬虫](https://ayonel.me/index.php/2017/05/17/coroutine_spider/)  
+参考：[Python协程](https://thief.one/2017/02/20/Python%E5%8D%8F%E7%A8%8B/)  
 
-concurrent.futures模块的基础是Exectuor，Executor是一个抽象类，它不能被直接使用。但是它提供的两个子类ThreadPoolExecutor和ProcessPoolExecutor却是非常有用，顾名思义两者分别被用来创建线程池和进程池的代码。我们可以将相应的tasks直接放入线程池/进程池，不需要维护Queue来操心死锁的问题，线程池/进程池会自动帮我们调度。
+concurrent.futures库
 
-
-
-## 具体项目使用多线程 or 多进程？
-
-- IO bound jobs -> multiprocessing.pool.ThreadPool（等同于 multiprocessing.dummy.Pool）  
-- CPU bound jobs -> multiprocessing.Pool  
-- Hybrid jobs -> depends on the workload, I usually prefer the multiprocessing.Pool due to the advantage process isolation brings
-
-
-## 踩过的坑
-
-- join()的正确使用
-
-```python
-# 正确用法：
-threads = []
-for i in range(8):
-    down = Downloader(queue)
-    threads.append(down)
-    down.start()
-for t in threads:
-    t.join()
-
-# 错误用法：
-# 主线程会被阻塞，按照单线程在运行
-for x in range(8):
-    down = Downloader(queue)
-    down.start()
-    down.join()
-```
-
-- File discripter
-
-在Linux内，对所有设备or文件的操作都是通过文件描述符进行的；  
-使用多进程时，python在linux平台上，通过主进程 fork() 出各个子进程（Windows压根没有fork，所有没有这个问题）；这些子进程会继承父进程的文件描述符（文件位置、文件偏移量、设备状态等）；当子进程执行操作（比如：访问日志文件），会父进程的文件偏移量上继续操作，这显然是不合理的。
-
-```python
-# 错误用法：
-from mutiprocessing import Pool
-pool = Pool()
-pool.map(do_monitor, inst_list)
-
-# 正确用法：
-# 当生成一个进程（池）的时候，立刻对其初始化；该重新连接数据库，就重新连接；该重新打开日志文件，就重新打开；
-# 可以避免一些莫名其妙的错误
-from mutiprocessing import Pool
-
-def pool_initialize(*args):
-    from django_cassandra_engine.models import cassandra_connection
-    from services.base import write_pid_file
-
-    write_pid_file('alert_service')
-    if cassandra_connection is not None:
-        cassandra_connection.reconnct()
-
-pool = Pool(None, pool_initialize)
-pool.map(do_monitor, inst_list)
-
-```
-
+参考：[concurrent.futures模块和协程详解](http://www.qingpingshan.com/jb/python/321541.html)  
+参考：[concurrent.futures — Manage Pools of Concurrent Tasks](https://pymotw.com/3/concurrent.futures/)  
+参考：[Python concurrent.future 使用教程及源码初剖](http://manjusaka.itscoder.com/2017/11/28/something-about-concurrent-future/)  
+参考：[Python并发编程之线程池/进程池--concurrent.futures模块](http://www.cnblogs.com/dylan-wu/p/7163823.html)  
