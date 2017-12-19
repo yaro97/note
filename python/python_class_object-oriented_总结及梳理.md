@@ -1,5 +1,7 @@
 # python_class_oop_总结及梳理.md
 
+本文对Python的Class相关知识点做一个串联，并提出“为什么要使用这个知识点”，希望XX更好的理解Clas！
+
 ## Instance Variable and Instance Method
 
 **问题**：没有Class的概念，如何表示各员工的相关信息呢？  
