@@ -10,8 +10,6 @@
 
 [其他Linux相关](https://github.com/yaro97/note/tree/master/linux)
 
-[Git知识点](https://github.com/yaro97/note/blob/master/tools/git_tutorial.md)
-
 ## 2、Python相关
 
 ### 2.1、基础知识
@@ -24,18 +22,11 @@
 
 ### 2.3、IO编程
 
-- 文件读写
+- 文件读写：略，参考：[菜鸟教程](http://www.runoob.com/python/python-files-io.html)
 
-```python
-with open('film_100_res.txt', 'a') as f:
-	f.write(item_byte + '\n')
-```
 
-![模式](http://www.runoob.com/wp-content/uploads/2013/11/2112205-861c05b2bdbc9c28.png)
+- 操作文件和目录：os/shutil模块
 
-- 操作文件和目录
-
-os/shutil模块
 
 - 序列化
 
@@ -61,13 +52,27 @@ pickle.dump(d, f)  # 到文件
 
 参考：[Python并发相关技术](https://github.com/yaro97/note/blob/master/python/python_multiprocessing_threading_%E5%A4%9A%E7%BA%BF%E7%A8%8B_%E5%A4%9A%E8%BF%9B%E7%A8%8B.md)
 
+### 2.6、网络编程
+
+略
+
+### 2.7、数据库编程
+
+略
+
 ## 3、Web前端
 
 略。
 
-## 4、爬虫基础
+## 4、工具相关
 
-### 4.1、基本概念Q&A
+[Git知识点](https://github.com/yaro97/note/blob/master/tools/git_tutorial.md)
+
+[Docker相关](https://github.com/yaro97/note/tree/master/docker)
+
+## 5、爬虫基础
+
+### 5.1、基本概念Q&A
 
 #### 爬虫是什么？
 
@@ -154,7 +159,7 @@ print(driver.page_source)  # 这个数据是不可能用请求库拿到的数据
 3. 如MongoDB、Redis等Key-Value形式存储。
 4. 二进制文件：图片、视频、音频等直接保存成特定的格式即可。
 
-### 4.2、爬虫常用库/工具
+### 5.2、爬虫常用库/工具
 
 #### 工具总览
 
@@ -260,7 +265,7 @@ result = pattern.search(content)  # 可以重复使用,节约compile时间;
 - re.sub('(\d+)', r'\1 Replacement', content) 可以实现在源字符串后面追加, `\1` 别是前面的分组`(\d+)`;
 - 习惯使用`res = re.compile(pattern, re.S), res.search('content')`,在重复compile时,比`re.search(pattern, content)`更高效;
 
-#### lxml - xpath解析库
+#### Lxml - xpath解析库
 
 提供了xpath解析方式（方便，高效）
 
@@ -399,7 +404,7 @@ print(li)
 
 官方文档：<http://pyquery.readthedocs.io/>
 
-#### beautifulsoup4
+#### Beautifulsoup4
 
 更加方便的网页解析库，依赖于lxml库，解析速度当然没有lxml快啦！
 
@@ -577,7 +582,7 @@ finally:
 browser.close()
 ```
 
-#### pymysql - 连接Mysql
+#### Pymysql - 连接Mysql
 
 用于操作mysql数据库; python2使用`mysql-python`库；在python3中使用`pymysql`代替。
 
@@ -590,7 +595,7 @@ cursor.execute('select * from db')  # 调用一些函数执行sql语句
 cursor.fetchone()  # 使用fetchone方法拿到数据库的内容
 ```
 
-#### pymongo - 连接MongoDB
+#### Pymongo - 连接MongoDB
 
 项目参考：[TaoBaoGoods_selenium](https://github.com/yaro97/spider_projects/blob/master/TaoBaoGoods_selenium/main.py)
 
@@ -606,7 +611,7 @@ db['table'].insert({'name':'Bob'})  # 调用db声明一个表名,并插入一条
 db['table'].find_one({'name':'Bob'})  # 数据的查询
 ```
 
-#### redis - 连接Redis
+#### Redis - 连接Redis
 
 也是非关系型数据库，也是key:value形式存储的。主要应用于后面的分布式爬虫、维护一个爬取队列，运行效率比较高，用它维护一个公共爬取队列，效果比较好。
 
@@ -618,7 +623,7 @@ r.set('name', 'Bob')  # 插入数据
 r.get('name')  # 获取数据
 ```
 
-#### phantomjs - 无界面浏览器
+#### Phantomjs - 无界面浏览器
 
 项目参考：[TaoBaoGoods_selenium](https://github.com/yaro97/spider_projects/blob/master/TaoBaoGoods_selenium/main.py)
 
@@ -637,7 +642,7 @@ driver = webdriver.PhantomJS()
 driver.page_source  # 同Chrome
 ```
 
-#### flask - 简单web框架
+#### Flask - 简单web框架
 
 是一个web库，后面的代理设置（代理的获取、存储）会用到。
 
@@ -645,7 +650,7 @@ driver.page_source  # 同Chrome
 pip install flask  # 依赖的库比较多
 ```
 
-#### django - 强大web框架
+#### Django - 强大web框架
 
 是一个web服务器框架，提供了完整的后台管理，提供了模板引擎、接口、路由等。可以使用django做一个完整的网站。后面的分布式爬虫维护时会用到。
 
@@ -653,7 +658,7 @@ pip install flask  # 依赖的库比较多
 pip install django  # 依赖的库比较多
 ```
 
-#### jupyter - python记事本
+#### Jupyter - python记事本
 
 运行在网页端的记事本，可以调试命令，支持mk语法。
 
@@ -1118,6 +1123,14 @@ CONCURRENT_REQUESTS_PER_IP = 0
 ```
 
 > 更多参数参见[这里](https://doc.scrapy.org/en/latest/topics/settings.html#concurrent-items)
+
+### 5.4、进阶
+
+#### a、下载文件/图片
+
+项目参考：DouyuImage_scrapy
+
+
 
 ### 5.4、常见问题
 
