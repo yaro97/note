@@ -4,7 +4,7 @@
 
 ## 1. 句子的基本结构
 
-### 1.1 主语
+### 1.1 可以作主语的结构
 
 #### a. 名词、代词
 
@@ -14,25 +14,33 @@ He is handsome.
 She study very hard.
 ```
 
-#### b. 动名词、不定式
-
-意愿，未发生的事情
+#### b. 动名词、不定式短语
 
 ```
 Studying english is funny.
-To find his dog is impossible.
+To find his dog is impossible.意愿，未发生的事情
+It is fun to learn english. 头太大，一般使用it当做形式主语，真正主语改成不定式结构放在后面。
 ```
 
-> 不定式表示没发生的事。
+但是有些固定结构不使用不定式替换动名词。
+
+```
+It is no use crying spilt milk. 覆水难收
+It is no use/sense/point in crying spilt milk.
+It is useless + to do.
+It is of no use + to do.
+```
 
 #### c. 名词从句
 
-戴that慧whether怡what/when...
+> 名词性从句包括：主语从句、宾语从句，标语从句，同位语从句。
+
+记忆口诀：戴that慧whether怡what/when...
 
 > 疑问句作主语不需要倒装。
 > 主语（头）太长使用it代替。
 
-one: that引导的陈述句
+- that引导的陈述句
 
 ```
 That she is beautiful is true.
@@ -40,18 +48,27 @@ That she is beautiful is true.
 It is difficult to understand that he killed a dog.
 ```
 
-two: Whether 引导的一般疑问句
+- Whether 引导的一般疑问句
+
+> 一般疑问句：可以使用yes/no来会的的疑问句。
 
 ```
 Whether he is a good man remain to be seen.
 It remain to be seen whether he is good man.
 ```
 
-Three: 疑问词引导的特殊疑问句
+- 疑问词引导的特殊疑问句
 
 ```
-When Tom arrived at school is dubious(可疑的).
-What he will do is still a question.
+When Tom arrived at school is dubious(可疑的). 作主语
+It is still a question what he will do. 使用It
+I don't know how he'll handle it. 作宾语
+I am worried about whether he can do it. 作介词宾语
+# 切记：that从句不能当做介词宾语。
+I am sure of the fact that the team has won the game. that从句当作介词宾语必须使用the fact.
+I am worried about his playing around all day. 动名词当作介词宾语。
+I am worried that he plays around all day. 去掉介词。
+
 ```
 
 #### d. 名词短语
@@ -63,6 +80,8 @@ What he will do is still a question.
 ```
 When to start it is not decided.
 How to do it is difficult.
+疑问副词：where to live / whether to try again / when to talk to him / how to do it.
+疑问代词：what to do / whom to see / which to buy / whom to talk to。
 ```
 
 #### e. from to/till 
@@ -70,11 +89,12 @@ How to do it is difficult.
 表示距离/时间的介词短语
 
 ```
-From Guangzhou to Beijing is a long distance. (其实前面省略了The distance)
+From Guangzhou to Beijing is a long distance. (其实前面省略了The distance).
+It is about 1000 kilometers from Shanghai to Beijing. 使用形式主语it。
 From 1900 till 2018 is a long period. （前面省略了time）。
 ```
 
-### 1.2 动词
+### 1.2 动词种类及用法
 
 判断及物动词(vt)/不及物动词(vi)
 
@@ -104,6 +124,7 @@ I am dancing.
 用法：1、主语+vi+补足语
 
 ```
+Hi is good. 需要形容词作表语。
 become(变成,vi,不适合 “Ta被我 _ ”)
 He become a good boy.(vi)
 He become knowledgable.
@@ -139,6 +160,8 @@ I have him do the work. 叫sb做某事
 
 #### e. Dative Verbs 授予动词
 
+用法：主语 + 授予动词 + 间接宾语（授予对象） + 直接表语（东西）。 
+
 ```
 I teach him english.
 I gave him a car. 两个宾语（直接宾语+间接宾语）
@@ -155,6 +178,60 @@ He robbed(抢劫) me of my handbag.（固定用法，sb放在前面）
 The city was deprived of its water supplies.这座城市被断了水。
 He eased me of my burden.他减轻了我的负担。
 ```
+
+
+
+### 1.3 五大句型；祈使句、感叹句、问句
+
+#### a. 五大句型
+
+上面的动词的5个种类对应句子的五大句型。这些都是`陈述句`，除此之外还有祈使句、感叹句、问句。
+
+#### b. 祈使句
+
+定义：把主语You及助动词should 或must 省略的句子。句子开头使用原型动词；句尾根据语气强弱使用`句号`或`感叹号`，亦由上面的五大句型演变而来。
+
+```
+You must run now. 完全vi
+(Don't) Run!
+You must be quiet now. 不完全vi+表语
+(Don't) Be quiet!
+You must open the door now. 完全vt+O
+(Don't) Open the door!
+You must make him do it. 不完全vt+o+oc
+(Don't) Make him do it.
+You must send him a letter. 授予vt+间接o+直接o。
+Send him a letter.
+Don't send him any letters.
+# 否定祈使句除了Don't外，还可以使用Never。
+```
+
+#### c. 感叹句
+
+定义：由How或What引导。
+
+- What + n + 主语 + 动词 ...!
+
+```
+What a beautiful car he has!
+What a great man he is!
+What a good boy you have made him!
+```
+
+- How + adj/adv + 主语 + 动词...！
+
+```
+How great he is! 形容词
+How Hard he studied! 副词
+```
+
+
+
+#### d. 问句
+
+
+
+
 
 ## 2. 两个句子的连接
 
