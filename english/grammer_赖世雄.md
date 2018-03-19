@@ -229,9 +229,32 @@ How Hard he studied! 副词
 
 #### d. 问句
 
+问句分为两种：一般疑问句，特殊疑问句。
 
+一般疑问句：不以疑问词开头的问句，可以用yes/no回答。
 
+```
+Is he nice?
+Could they handle the problem?
+Did he leave early?
+Doesn't he want it?
+Isn't he happy?
+# 回答：无论是哪种一般疑问句，肯定=yes；否定=no
+```
 
+特殊疑问句：以when what where why how who whom which 等开头的问句，不能用yes/no回答。
+
+```
+Where will you go?
+Why did he cry?
+Who is he?
+Whom/who he saw then?  # 美语中常用who代替whom。
+---------
+What/Who/Which 三个疑问词可以当作名词，可以直接放在居首，而无需采用倒装结构。
+Who came?
+What (has) happened?
+Which was broken?
+```
 
 ## 2. 两个句子的连接
 
@@ -498,7 +521,7 @@ c. 动名词：`doing`
 > 至于动名词和现在分词都可以作的成分定语/表语,需要具体去区别(现在分词表示主动/进行,作定语时表示与被修饰词是主动关系.动名词作定语时表示被修饰词的用途.).
 > ```
 
-#### 4.1 不定式
+### 4.1 不定式
 
 ```
 To study abroad is my dream. # 作为名词，表示未发生的。
@@ -556,9 +579,9 @@ cannot help but + do 忍不住...
 cannot help + doing 忍不住...
 ```
 
-#### 4.2 分词
+### 4.2 分词
 
-现在分词 + 过去分词
+#### 现在分词 + 过去分词
 
 ```
 现在分词：
@@ -575,13 +598,13 @@ cannot help + doing 忍不住...
 
 分词在句中可以表示 正在进行、完成、被动 语态的概念，即，进行式/完成式/被动式
 
-##### 分词当作形容词
+#### 分词当作形容词
 
 现在分词：形容词，翻译：“令人/正在/即将。。。的” interesting, exiting, confusing, aging, 
 
 过去分词：形容词，翻译：“感到/已经。。。的” exterested, exited, confused
 
-##### 分词当作补足语
+#### 分词当作补足语
 
 - 如果是 vt ，后面无宾语，使用done；后面有宾语，使用doing。
 - 如果是vi， 当作宾语补足语时，一定用doing。
@@ -597,7 +620,7 @@ He was walking to me pipe in mouth.   # 托福考试原题-叼着烟斗
 He was talking to me with his leg shivering. vi作为介词
 ```
 
-##### 分词当作名词
+#### 分词当作名词
 
 其实是形容词，比如 `the rich`表示 `这一类有钱的人`。
 
@@ -607,7 +630,7 @@ The wounded were sent to hospital immediately. 伤员被立即送往医院
 The unexpected happened. 意外发生了。
 ```
 
-##### 分词当作副词
+#### 分词当作副词
 
 ```
 It is freezing/biting cold today. 刺骨的冷
@@ -615,10 +638,9 @@ Tea is boiling hot.
 An estimated 54 people were killed in the air crash. 估计
 He is dead wrong. 完全地completely
 The answer is doubtless correct. 毫无疑问正确
-
 ```
 
-##### 分词结构
+#### 分词结构
 
 句子中有两个动词，需要使用连词（and/but...）；
 
@@ -631,6 +653,63 @@ He came home crying.
 He sat in the corner reading a newspaper.
 He came home (being) tired. 省略being
 ```
+
+### 4.3 动名词
+
+动名词的形态和现在分词完全一样；但是不同的是：动名词具有本质是名词，具有名词的特性，可以作主语/表语/表语。
+
+#### 名词性功能
+
+```
+Working with him is fun. 作主语
+It gives me great pleasure to help others.  # It 后面需要使用不定式
+It is no use Crying over spilt milk. # 固定用法
+His hobby is collecting stamps. 作表语。
+My hope is to fulfill the mission. 表示未发生的事情。
+Some people do not enjoy smoking. 作宾语。
+# 动名词作宾语的动词有：condider contemplate imagine fancy avoid risk escape deny admit stop quit suggest recommend mind remember finish practice anticipate等等
+He is fond of taking a walk. 介词的宾语。
+```
+
+#### 所有格与动名词的关系
+
+```
+His teaching well is something that pleases me.
+His not finishing the work on time desappointed me.
+Their having helped John with the work won our great admiration.
+# 表示喜欢/厌恶/在意等及物动词不能使用that引导的表语从句。
+如：I don't like that he smokes here. 是错误的；可以使用：
+I don't like his smoking here.
+# 另外：That从句也不可以当作介词的宾语。
+I am curious about his staying up late every night. 不能使用that从句。
+In spite of the sun shining, the air was very cold. 主语是“物”，不使用所有格。
+```
+
+#### 与名词组合成复合名词
+
+```
+a sleeping car. 用来睡觉的车厢-动名词。 名词性质
+a sleeping baby. 正在睡觉的baby-现在分词。 形容词性质
+```
+
+#### 常用动名词习惯用语
+
+```
+There is no reasoning with such a stubborn man. 和这么固执的人理论是不可能的。
+# 等同于 It is impossible to do...
+It is no use trying to escape.
+Cannot help/stop/resist doing 忍不住，还有 refrain from doing.
+# 等同于 cannot but do 或者 cannot help but do.
+On/Upon hearing it, he cried. 一听到。。。就。。。
+```
+
+
+
+## 5. 助动词及易用错的词
+
+
+
+
 
 
 
