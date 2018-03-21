@@ -2,7 +2,7 @@
 
 语法是基础，需要大量的阅读来巩固语法。
 
-## 1. 句子的基本结构
+## 1 句子的基本结构
 
 ### 1.1 可以作主语的结构
 
@@ -256,9 +256,9 @@ What (has) happened?
 Which was broken?
 ```
 
-## 2. 两个句子的连接
+## 2 两个句子的连接
 
-### 2.1. 连接符号
+### 2.1 连接符号
 
 bash(-), colon(:), semi-colon(;)
 
@@ -268,7 +268,7 @@ He has finally made his goal known to us:he wants to be a scientist.
 He is nice;quite often he is seen helping others.
 ```
 
-### 2.2. 并列连词
+### 2.2 并列连词
 
 and, or, but 介词短语等
 
@@ -501,7 +501,7 @@ There was no one whom he didn't hate. # 没有什么人是他不讨厌的。
 There was no one but he hated. #同上
 ```
 
-## 4. 非谓语动词
+## 4 非谓语动词
 
 由动词变化而成，一共有三种：
 
@@ -705,9 +705,81 @@ On/Upon hearing it, he cried. 一听到。。。就。。。
 
 
 
-## 5. 助动词及易用错的词
+## 5 助动词及易用错的动词
 
+### 5.1 助动词
 
+定义：帮助`动词`的词，放在动词前面，使动词表现出时态、语态、否定句、疑问句等变化。
+
+#### a. be动词
+
+```
+He is reading a book. 表示正在进行时态。
+He was elected chairman. 表示被动语态。
+```
+
+#### b. have
+
+构成完成时态。
+
+```
+He has written the letter. 现在完成时。
+I had finished the task before he came. 过去完成时
+```
+
+#### c. do
+
+```
+I didn't know what to do. 表示否定
+He doesn't live here.
+-----还有其他表示否定的副词：
+He never lived here.
+He seldom sings.
+Did you understand it? 表示疑问。
+He did work hard. 表示强调。
+Do be quiet!. 强调。
+Never did I know that he was so stupid. 否定倒装句。
+Yes, I did. 代表之前的动词。
+```
+
+#### d. shall, will
+
+```
+I will tell you the truth tomorrow. 一般将来时态。
+Shall I open the door? 表示征求意见。
+You shall/must obey the law. 命令语气。
+You shall have the present. 向对方保证。
+```
+
+#### e. should
+
+```
+We should be kind to others. 表示一种义务/应当。
+It is natural/proper/right/desirable that he should get angry. 表示“他会...很正常/恰当”。
+It is surprising that he should be so kind. 他竟然...
+It is a pity that he should be so rude. 他居然...
+He suggested that we (should) leave at once. 
+# 表示意志/要求/命令/规定...的动词引导的that从句应使用should，可以省略。
+He came early lest(以免 conj.) he (should) be late. Lest引导的从句。
+If you should be late again, you will spoil the plan. 你万一再迟到，就会破坏这个计划。
+I told him that I should be at home that evening.一般过去式。
+You should have done it earlier. 你应该早点做好的。
+It is a pity that he should have done such a stupid thing. 很遗憾他竟然做了这么愚蠢的事情。
+```
+
+#### f. would
+
+```
+He said that he would try again. 过去将来时。
+He said that he will visit the country sometime in July. 新闻中经常出现Will，表示现在还没有到July。
+If I had money now,I would buy a car. 如我我有钱(但是没钱)，我就...
+If I had had money then, I would have bought a car.过去...
+I would rather go than stay here. 我宁愿走，也不..
+I would rather (that) he were here. 我多么希望他在这儿（与现在相反）。
+I would rather that he had been here yesterday. 我多希望他昨天在这儿。
+Would you mind doing it for me ? 你介意。。。
+Would you mind if you did it for me? 你介意。。。
+```
 
 
 
