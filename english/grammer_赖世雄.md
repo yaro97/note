@@ -781,7 +781,22 @@ Would you mind doing it for me ? 你介意。。。
 Would you mind if you did it for me? 你介意。。。
 ```
 
+#### g. can, could
 
+```
+He can cope whith the problem. 表示能够..处理，等同于 be able to.
+He can be wrong to say so. 表示可能性。
+You can go home. 表示许可。
+No, it can't be true. 表示可能性。
+He is so honest that he can't have stolen your money. 不可能曾经...
+He looks nervous; he must/may have stolen you money. 肯定推论不能使用can。
+Can he have stolen you money? 他有可能投了你的钱么？
+She could speak English well when she was ten. 表示过去的状态用could.
+Could/Would you please do it for me? 表示客气的语句。
+can 和 not连用时，需要连起来：cannot/can't；而could则要写成 couldn't/could not.
+I can but/only do so. 我只能这么做。
+I cannot but/(help but) laugh. (I cannot help laughing). 我忍不住大笑。
+```
 
 
 
