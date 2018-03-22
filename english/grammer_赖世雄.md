@@ -798,5 +798,37 @@ I can but/only do so. 我只能这么做。
 I cannot but/(help but) laugh. (I cannot help laughing). 我忍不住大笑。
 ```
 
+#### h. may, might
+
+```
+You may take whatever you like. 表示许可、可以
+May I go home? 许可，后面 + 原型动词
+Might I make a suggestion? 更委婉。
+It may be true. 表示推测、可能，等同于can
+It's getting late; he may not come. 可能不
+You may/must not cheat during exams. 不可以。
+I thought that it might rain. 表示过去的状况。
+If he tried hard, he might secceed. 虚拟，与现在相反。
+If he had tried hard, he might have succeeded. 虚拟，与过去相反。
+He knows so many things that he may well be called a genius. 大可/足可以。
+You may as well stay home. 不妨...（语气缓和）
+You had better stay home. 最好...（语气较强）
+You may as well stay home as go out with them. 与其...倒不如...等同于 “had better do than do”。
+You might as well die as make friend with Mary. 可能性更小（不相信会去死）。
+```
+
+#### i. must
+
+```
+You must finish the work before leaving.  表必须，义务。
+You must love your country. 义务上的强制。
+You have to love your countr. 我得爱国("有必要"的意思)。
+# 另外，have to 可用于将来、现在、过去。must 不能用于过去式，
+You must not do it. 
+
+```
+
+
+
 
 
