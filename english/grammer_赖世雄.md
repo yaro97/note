@@ -824,9 +824,84 @@ You must finish the work before leaving.  表必须，义务。
 You must love your country. 义务上的强制。
 You have to love your countr. 我得爱国("有必要"的意思)。
 # 另外，have to 可用于将来、现在、过去。must 不能用于过去式，
-You must not do it. 
+You must/may not do it.  你绝不可做这事。
+You don't have to do it. 不必做，等同于need not。
+I gotta tell you the truth. 口语中have to常使用have got to 或 gotta 代替。
+It must be true. 对现在状态的推论。
+It must have rained last night. 对过去的推论。
+```
+
+#### j. ought to
+
+大部分气矿ought to可以用should代替。
 
 ```
+You should(ought to) be kind to thers. 表示义务、应当。
+Since he works hard, he ought to succeed. 推论。
+If he had worked hard, he ought have been successful. 要是他努力的话，应该早成功了（虚拟语句）。
+He ought to have arrived in New York by now. 应该已经...。
+```
+
+#### k. need
+
+```
+He needs to go. 动词+to do。
+The car needs to be cleaned. 被动。
+The car needs (the process of) cleaning.
+He need not go. 助动词+not do。
+He doesn't need to go. 动词。
+He didn't need to attend the party, so he stayed home. 当时不必...没做。
+He needn't have attended the party, but he went there. 当时不必...却做了。
+Need he go? 助动词。
+Does he need to go? 动词，同上。
+He needs to go, doesn't he?
+He doesn't need to go, does he?
+He need not go, need he? 助动词。
+```
+
+#### l. dare
+
+```
+He dare not go. 助动词。
+Dare he go? 他敢去么？
+How dare you say such a thing to me? 怎么敢+陈述句。
+I wonder whether he dare do it. 我怀疑他是否敢..。
+He dares/dared to go. 动词+to do。
+He dare not answer the phone. 助动词。
+He doedn't dare (to) answer the phone. 动词。
+He dared me to jump the stream. 向我挑战。
+I daresay he will be late again. 我敢说...。
+```
+
+#### m. used to 
+
+```
+=======以下 used to 为助动词
+He used to live here. 他以前曾...。
+I used to call on him every Sunday. 我以前每星期天都去拜访他。
+There used to be a big tree here. 以前这儿有个树。
+Used there to be a pond in this garden? 以前这个有个池塘么（used助动词提前）？
+Used he to work hard?(罕见) 主语为人时，使用下句：
+Did he use to work hard?（常用）
+======以下 used to 为use的过去分词
+人+is used to doing/名词. 习惯做某事。
+He is used to speaking aloud.
+He is accustomed to speaking aloud. 同上。
+The book can be used to teach us English writting. 某物被用来...。
+The knife was used as a weapon.
+```
+
+### 5.2 易用错的动词
+
+#### a. lie, lay
+
+躺 vi.：lie lay lain lying.
+
+说谎 vi.：lie lied lied lying.
+
+放置、生产 vt.：lay laid laid laying.d
+
+
 
 
 
