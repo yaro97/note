@@ -71,7 +71,7 @@ def is_prime(n):
     return True
 
 def main():
-    with concurrent.futures.ProcessPoolExecutor() as executor:  # with语句保证及时关闭进程
+    with concurrent.futures.ProcessPoolExecutor(max_workers=nprocs) as executor:  # with语句保证及时关闭进程
         for number, prime in zip(PRIMES, executor.map(is_prime, PRIMES)):
             print('{:d} is prime: {}'.format(number, prime))
 
@@ -81,6 +81,60 @@ if __name__ == '__main__':
 
 > executor.map函数说明：如果函数调用引发了异常，那么那个异常也会从返回的迭代器抛出。对于非常长的迭代任务来说，比较大的chunksize值能加快速度(仅仅是使用ProcessPoolExecutor模块的情况，使用ThreadPoolExecutor的情况，chunksize没有任何用处)。
 > 原文：When using ProcessPoolExecutor, this method chops iterables into a number of chunks which it submits to the pool as separate tasks. The (approximate) size of these chunks can be specified by setting chunksize to a positive integer. For very long iterables, using a large value for chunksize can significantly improve performance compared to the default size of 1. With ThreadPoolExecutor, chunksize has no effect.
+
+### multiprocessing代码实例
+
+以下演示多进程，多线程的API完全一样。
+
+```python
+import multiprocessing
+import math
+
+PRIMES = [
+    112272535095293,
+    112582705942171,
+    112272535095293,
+    115280095190773,
+    115797848077099,
+    1099726899285419]
+
+def is_prime(n):
+    """判断是否是质数"""
+    if n % 2 == 0:
+        return False
+
+    sqrt_n = int(math.floor(math.sqrt(n)))
+    for i in range(3, sqrt_n + 1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+def main():
+    with multiprocessing.Pool(nprocs) as pool:  # 多进程，with语句保证及时关闭进程
+    # with multiprocessing.pool.ThreadPool as pool:  # 多线程
+        for number, prime in zip(PRIMES, pool.map(is_prime, PRIMES)):
+            print('{:d} is prime: {}'.format(number, prime))
+
+if __name__ == '__main__':
+    # multiprocessing.freeze_support()  # Windows平台提示RuntimeError错误，需要加上这句
+    main()
+```
+
+### multiprocessing多进程map/map_async/imap/imap_unordered区别
+
+参考：
+
+https://stackoverflow.com/questions/26520781/multiprocessing-pool-whats-the-difference-between-map-async-and-imap
+
+https://stackoverflow.com/questions/35908987/python-multiprocessing-map-vs-map-async
+
+http://blog.shenwei.me/python-multiprocessing-pool-difference-between-map-apply-map_async-apply_async/
+
+map是阻塞的，map_async是异步的
+
+map把可迭代对象转变为List，必须等待转换完成，内存占用大，可以划分为chunks；imap时迭代器，内存占用少，可以通过chunksize分块。
+
+imap_unordered时无序的imap。
 
 ### concurrent.futures和multiprocessing结构对比
 
