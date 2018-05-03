@@ -224,11 +224,91 @@ OK
 127.0.0.1:6379> INCRBYFLOAT key3 0.8
 "5.6"
 # 15》DECR/DECRBY：自减  # 没有DECRBYFLOAT(可以通过自增负数实现)
+# 12》APPEND：追加到字符串后面，没有字符串的话，等同于SET命令。
+127.0.0.1:6379> SET testString 'hello'
+OK
+127.0.0.1:6379> APPEND testString 'World'
+(integer) 10
+127.0.0.1:6379> GET testString
+"helloWorld"
+```
+
+- Hash类型：
+
+
+
+```sh
+# redis.conf中的Hash配置
+hash-max-ziplist-entries 512  # 512字节
+hash-max-ziplist-value 64  # 字段数目
+
+# 1》 HSET：将设哈希表key中的某个field设置成制定的value，可以重新赋值。
+127.0.0.1:6379> HSET userInfo username 'king'
+(integer) 1
+127.0.0.1:6379> HSET userInfo password '123456'
+(integer) 1
+127.0.0.1:6379> HSET userInfo email '3333@qq.com'
+(integer) 1
+# 2》 HGET：获得哈希表指定key中的某个field的value。
+127.0.0.1:6379> HGET userInfo email
+"3333@qq.com"
+# 3》 HSETNX：只有field不存在才设置成功
+127.0.0.1:6379> HSETNX testHash1 test 'a'
+(integer) 1
+127.0.0.1:6379> HSETNX testHash1 test '11'
+(integer) 0  # 返回0，表示不成功
+127.0.0.1:6379> HGET testHash1 test
+"a"  # 依然是‘a’
+# 4》 HMSET：设置多个field，也会重新赋值
+127.0.0.1:6379> HMSET userInfo2 username 'king' password '123' nickname 'dupy'
+OK
+# 5》 HMGET：获得多个field
+127.0.0.1:6379> HMGET userInfo2 username nickname  foo
+1) "king"
+2) "dupy"
+3) (nil)
+# 6》 HGETALL：获得所有的field和value
+127.0.0.1:6379> HGETALL userInfo
+1) "username"
+2) "king"
+3) "password"
+4) "123456"
+5) "email"
+6) "3333@qq.com"
+# 7》 HKEYS:获取所有的field
+127.0.0.1:6379> HKEYS userInfo2
+1) "username"
+2) "password"
+3) "nickname"
+4) "email"
+# 8》 HVALS:获取所有的value
+127.0.0.1:6379> HVALS userInfo2
+1) "king"
+2) "123"
+3) "dupy"
+4) "@@@"
+# 9》 HEXISTS:检查field是否存在
+127.0.0.1:6379> HEXISTS userInfo2 name
+(integer) 0
+# 10》 HLEN:获取field数量
+127.0.0.1:6379> HLEN userInfo2
+(integer) 4
+# 11》 HINCRBY:对某个field（Integer）进行增量计算
+127.0.0.1:6379> HINCRBY userInfo2 password 5
+(integer) 128
+# 12》 HINCRBYFLOAT:对某个field（Integer）进行增量浮点计算
+127.0.0.1:6379> HINCRBYFLOAT userInfo2 password -5.1
+"122.9"
+# 13》 HDEL:删除指定的field
+127.0.0.1:6379> HDEL userInfo2 nickname email
+(integer) 2
+127.0.0.1:6379> HKEYS userInfo2
+1) "username"
+2) "password"
+
 ```
 
 
-
-Hash类型：
 
 List类型：
 
