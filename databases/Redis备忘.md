@@ -124,11 +124,83 @@ dir ./  # 指定数据库文件保存目录（默认是当前目录）。
 # =======其他高级选项=====自己研究
 ```
 
+## 和Key相关命令
+
+Redis 键命令用于管理 redis 的键。 
+
+```sh
+# 1》 KEYS:返回所有的key，支持通配符（* ? [] \?）
+127.0.0.1:6379> KEYS *
+1) "testString1"
+2) "userInfo"
+3) "testString2"
+# 2》 EXISTS:检测key是否存在
+127.0.0.1:6379> EXISTS name
+(integer) 0
+# 3》 TYPE:返回key的类型
+127.0.0.1:6379> type testString1
+string
+127.0.0.1:6379> type userInfo
+hash
+# 4》 EXPIRE:设置过期时间（seconds），再次设置覆盖。
+127.0.0.1:6379> SET cache_page 'http://www.baidu.com'
+OK
+127.0.0.1:6379> EXPIRE cache_page 1000
+(integer) 1
+127.0.0.1:6379> TTL cache_page
+(integer) 994
+# 5》 EXPIREAT:设置过期时间（时间戳）
+127.0.0.1:6379> EXPIREAT cache_page 1525424900
+(integer) 1
+127.0.0.1:6379> TTL cache_page
+(integer) 133
+# 6》 PEXPIRE:设置过期时间（milliseconds）
+127.0.0.1:6379> SET cache_page 'http://www.baidu.com'
+OK
+127.0.0.1:6379> PEXPIRE cache_page 1000000
+(integer) 1
+127.0.0.1:6379> PTTL cache_page
+(integer) 121
+# 7》 PEXPIREAT:设置过期时间（milliseconds时间戳）
+# 8》 TTL：返回key的剩余时间（秒）-time to live;永久的key返回-1，不存在的key返回-2；
+# 9》 PTTL：返回key的剩余时间（毫秒）
+# 10》 PERSIST：将含有过期时间的key设置为永久
+# 11》 DEL：删除key
+127.0.0.1:6379> DEL testString testString0
+(integer) 1
+# 12》 RANDOMKEY：随机返回一个key
+# 13》 RENAME：重命名key名称
+127.0.0.1:6379> RENAME key newkey
+# 14》 RENAMENX：newkey必须不存在，才生效
+# 15》 DUMP：序列化给定的key，返回序列化之后的指
+# 16》 RESTORE：反序列化  ## ttl设置为0（毫秒）-代表永久生效
+127.0.0.1:6379> SET testDump 'This is a text'
+OK
+127.0.0.1:6379> DUMP testDump
+"\x00\x0eThis is a text\b\x00\xdc\xfcl?\x90%\x9e\xf2"
+127.0.0.1:6379> RESTORE testDump1 0 "\x00\x0eThis is a text\b\x00\xdc\xfcl?\x90%\x9e\xf2"
+OK
+127.0.0.1:6379> get testDump1
+"This is a text"
+# 17》 MOVE：将当前数据库中的key移动到其他数据库
+127.0.0.1:6379> SET testMove aaaa
+OK
+127.0.0.1:6379> MOVE testMove 1  # 将testMove移动到1数据库
+(integer) 1
+127.0.0.1:6379> GET testMove
+(nil)
+127.0.0.1:6379> SELECT 1  # 切换到1数据库
+OK
+127.0.0.1:6379[1]> GET testMove
+"aaaa"
+# 18》 其他命令：OBJECT MIGRATE SCAN SORT 后续再讲解
+```
+
 ## Redis String类型及相关命令
 
-Redis支持五种类型：
+Redis支持五种类型：String/Hash/List/Set/Zset类型
 
-- String类型：
+Redis 字符串数据类型的相关命令用于管理 redis 字符串值 
 
 ```sh
 一个建最大能存储512M，
@@ -233,9 +305,11 @@ OK
 "helloWorld"
 ```
 
-- Hash类型：
+## Redis Hash类型及相关命令
 
+Redis hash 是一个string类型的field和value的映射表，hash特别适合用于存储对象。
 
+Redis 中每个 hash 可以存储$2^{32}-1$键值对（40多亿）。
 
 ```sh
 # redis.conf中的Hash配置
@@ -310,11 +384,217 @@ OK
 
 
 
-List类型：
+## Redis List类型及相关命令
 
-Set类型
+Redis列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）
 
-Zset有序集合类型
+一个列表最多可以包含$2^{32}-1$ 个元素 (4294967295, 每个列表超过40亿个元素)。
+
+内部通过`双向链表`实现，所以获取两端的元素速度较快。
+
+```sh
+# 1》 LPUSH:向List左端依次添加元素,key不存在会自动创建
+127.0.0.1:6379> LPUSH myList a b c
+(integer) 3
+127.0.0.1:6379> LPUSH myList c d e
+(integer) 6
+127.0.0.1:6379> LRANGE myList 0 -1
+1) "e"
+2) "d"
+3) "c"
+4) "c"
+5) "b"
+6) "a"
+# 2》 RPUSH:向List右端依次添加元素
+RPUSH myList1 test1 test2 test3
+# 3》 LPUSHX:只有key存在才会添加
+# 4》 RPUSHX:只有key存在才会添加
+# 5》 LPOP:弹出左侧元素。删除并返回
+# 6》 RPOP:弹出右侧元素。删除并返回
+# 7》 LLEN:返回列表长度
+# 8》 LLEN:返回列表片段
+LRANGE key start stop  # 0开始，-1结束
+127.0.0.1:6379> LRANGE testList -2 -1
+1) "b"
+2) "c"
+# 9》 LREM:删除指定value
+LREM key count value
+	# count>0 从左到右搜索，删除count个；
+	# count<0 从右到左搜索，删除count个；
+	# count=0 删除所有值为value的key；
+# 10》 LINDEX:获取指定key的value
+LINDEX key index
+# 11》 LSET:设置指定key的value
+LSET key index value
+# 12》 LTRIM:对一个列表进行修剪(trim)，只保留指定区间内的元素，其他元素都将被删除。
+LTRIM key start stop
+# 13》 LINSERT:插入元素
+LINSERT key BEFORE|AFTER pivot value
+127.0.0.1:6379> LINSERT x BEFORE 'b' king
+(integer) 5
+127.0.0.1:6379> LRANGE x 0 -1
+1) "d"
+2) "c"
+3) "king"
+4) "b"
+5) "a"
+# 14》 RPOPLPUSH:将一个元素从一个列表转移到另一个列表
+RPOPLPUSH source destination  # 源列表和目标列表相同
+# 14》 BLPOP:LPOP的阻塞版本
+BLPOP key [key ...] timeout  # TO为0表示阻塞时间无限大
+127.0.0.1:6379> EXISTS myList3 # myList3不存在
+(integer) 0
+BLPOP myList3 0  # 会一直阻塞，知道LPUSH一个值（另外开启一个redis-cli）
+```
+
+## Redis Set类型及相关命令
+
+Redis 的 Set 是 String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据。
+
+Redis 中集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)。
+
+集合中最大的成员数为$2^{32}-1$ (4294967295, 每个集合可存储40多亿个成员)。
+
+```sh
+# 1》 SADD:向集合添加元素
+SADD key member [member ...]
+# 2》 SMEMBERS:返回集合的成员
+SMEMBERS key
+# 3》 SISMEMBER:检查元素是否是集合的成员
+SISMEMBER key member
+# 4》 SREM:删除集合的元素
+SREM key member [member ...]
+# 5》 SPOP:随机弹出集合的一个元素（删除并返回）
+SPOP key [count]
+# 6》 SRANDMEMBER:随机返回集合中的元素（不删除）
+SRANDMEMBER key [count]
+	# count>0,返回随机元素
+	# count<0,返回数组（成员可重复）（count可以大于元素个数）
+# 7》 SDIFF：返回差集
+SDIFF key [key ...]
+# 8》 SINTER：返回交集
+SINTER key [key ...]
+# 9》 SUNION：返回并集
+SUNION key [key ...]
+# 10》 SCARD：返回集合元素的个数
+# 11》 SDIFFSTORE：SDIFF之后并保存到destination
+SDIFFSTORE destination key [key ...]
+# 12》 SINTERSTORE：SDIFF之后并保存到destination
+SINTERSTORE destination key [key ...]
+# 13》 SUNIONSTORE：SDIFF之后并保存到destination
+SUNIONSTORE destination key [key ...]
+# 14》 SMOVE:将元素移动到另一个集合中
+SMOVE source destination member
+	#SMOVE 是原子性操作。
+	#如果 source 集合不存在或不包含指定的 member 元素，则 SMOVE 命令不执行任何操作，仅返回 0 。否则， member 元素从 source 集合中被移除，并添加到 destination 集合中去。
+	#当 destination 集合已经包含 member 元素时， SMOVE 命令只是简单地将 source 集合中的 member 元素删除。
+```
+
+## Redis Zset（Sorted Set）类型及相关命令
+
+Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
+
+不同的是**每个元素都会关联一个double类型的分数**。redis正是通过分数来为集合中的成员进行从小到大的排序。
+
+**有序集合的成员是唯一的,但分数(score)却可以重复。**
+
+集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是O(1)。 集合中最大的成员数为 $2^{23}-1$(4294967295, 每个集合可存储40多亿个成员)。
+
+比List查询更快，但是更占用内存。
+
+```sh
+# 1》 ZADD:将分数/元素添加到Zset
+ZADD key [NX|XX] [CH] [INCR] score member [score member ...]
+ZADD phpScore 100 king 96 queen 98 mazi 80 test # 重复添加会刷新分数
+ZADD phpScore 99.9 yaro
+ZADD phpScore +inf maxInt -inf minInt
+# 2》 ZSCORE:获取成员的分数
+ZSCORE key member
+# 3》 ZRANGE:按照元素分数从小到大，返回元素（包含两端，可以使用左括号`(`表示不包含端点）
+ZRANGE key start stop [WITHSCORES]  # 当分数相同时，按照元素的ASCII码排序
+127.0.0.1:6379> ZRANGE phpScore 0 2 WITHSCORES
+1) "minInt"
+2) "-inf"
+3) "test"
+4) "80"
+5) "queen"
+6) "96"
+# 4》 ZREVRANGE:按照元素分数从大到小
+ZREVRANGE key start stop [WITHSCORES]
+# 5》 ZRANGEBYSCORE:获得指定分数范围内的元素，从小到大（含两端）。
+	# [LIMIT offset count] 第一个offset为0，count指数量。
+ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]
+127.0.0.1:6379> ZZRANGEBYSCORE phpScore (80 (100  # 左括号表示不包含端点
+1) "queen"
+2) "mazi"
+3) "yaro"
+# 6》 ZREVRANGEBYSCORE:获得指定分数范围内的元素，从大到小（含两端）。
+ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]
+# 7》 ZINCRBY:增加元素的分数，返回增加后的结果
+ZINCRBY key increment member  # 可以使用负数。
+127.0.0.1:6379> ZSCORE phpScore test  # 获得分数
+"80"
+127.0.0.1:6379> ZINCRBY phpScore 5 test  # 增加5分
+"85"
+# 8》 ZCARD:获得zset中元素的数量
+ZCARD key
+# 9》 ZCOUNT:获得zset中指定分数范围内的数量
+ZCOUNT key min max
+# 10》 ZREM:删除指定的元素，返回删除的数量
+ZREM key member [member ...]
+# 11》 ZREMRANGEBYRANK:按照分数从小到大的顺序删除指定排名范围内的所有元素
+ZREMRANGEBYRANK key start stop
+ZREMRANGEBYRANK phpScore 0 3  # 删除前四个元素
+# 12》 ZREMRANGEBYSCORE:删除指定分数范围内的所有元素
+ZREMRANGEBYSCORE key min max
+# 13》 ZRANK:获得指定成员的排名（分数从小到大）
+ZRANK key member
+127.0.0.1:6379> ZRANK phpScore yaro
+(integer) 4
+# 14》 ZRANK:获得指定成员的排名（分数从大到小）
+ZREVRANK key member
+# 15》 ZINTERSTORE:求Zset之间的交集,并保存
+ZINTERSTORE destination numkeys key [key ...] [WEIGHTS权重 weight weight...] [AGGREGATE合并选项 SUM | MIN | MAX]
+127.0.0.1:6379> ZADD testZset1 1 a 2 b 3 c  # 设置testZset1
+(integer) 3
+127.0.0.1:6379> ZADD testZset2 10 a 20 b 30 c # 设置testZset2
+(integer) 3
+127.0.0.1:6379> ZINTERSTORE resultZset1 2 testZset1 testZset2 # 交集
+(integer) 3
+127.0.0.1:6379> ZRANGE resultZset1 0 -1 WITHSCORES # 查看交集结果（默认分数求和）
+1) "a"
+2) "11"
+3) "b"
+4) "22"
+5) "c"
+6) "33"
+127.0.0.1:6379> ZINTERSTORE resultZset1 2 testZset1 testZset2 AGGREGATE max
+(integer) 3
+127.0.0.1:6379> ZRANGE resultZset1 0 -1 WITHSCORES
+1) "a"
+2) "10"
+3) "b"
+4) "20"
+5) "c"
+6) "30"
+127.0.0.1:6379> ZINTERSTORE resultZset1 2 testZset1 testZset2 WEIGHTS 0.1 2  # 分别指定权重系数为0.1 和 2
+(integer) 3
+127.0.0.1:6379> ZRANGE resultZset1 0 -1 WITHSCORES
+1) "a"
+2) "20.100000000000001"
+3) "b"
+4) "40.200000000000003"
+5) "c"
+6) "60.299999999999997"
+# 16》 ZUNIONSTORE:求Zset之间的并集,并保存
+ZUNIONSTORE destination numkeys key [key ...] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]
+```
+
+
+
+
+
+
 
 
 
