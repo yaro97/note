@@ -531,6 +531,8 @@ setfacl -b 文件名  # 删除文件的所有acl权限
 
 #### 2、文件特殊权限
 
+参考：https://blog.csdn.net/sinat_30071459/article/details/51206581
+
 - 2.1 SetUID
 
 **功能介绍：**

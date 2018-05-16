@@ -4,6 +4,8 @@ Tags：manjaro，xfce，archlinux，aur，xfce美化
 
 [TOC]
 
+遇到问题请参考**ArchLinux官网**:https://wiki.archlinux.org
+
 刻录U盘（建议windows下使用Rufus刻录软件），安装即可；值得注意的是，在进入U盘的界面可以选择驱动，先尝试闭源驱动（nofree），倘若无法进入系统，再尝试开源驱动即可。
 
 ## 分区相关
@@ -36,13 +38,10 @@ sudo pacman -Sv yay/pacaur/aurman(aur) # 当然还可以选择yaourt(可以更�
 sudo pacman -S fcitx-sogoupinyin（aur） fcitx-im fcitx-configtool
 # fcitx-sogoupinyin依赖qtwebkit，安装要是出现问题（安装无法完成），建议先单独安装qtwebkit-bin
 
-nano ~/.xprofile
-
 # .xprofile (如果遇到有些软件不能输入中文，再添加到.bash_profile)是配置窗口打开时运行的命令,写入如下内容：
+sudo echo -e "export GTK_IM_MODULE=fcitx\nexport QT_IM_MODULE=fcitx\nexport XMODIFIERS=@im=fcitx" >> ~/.xprofile
 
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export XMODIFIERS="@im=fcitx"
+#对于jetbrians系列fcitx无法跟随的情况 fcitx输入法配置>附加组件>勾选高级>xim前端>勾选on the spot
 
 ## 注销用户重新登录即可使用
 ```
@@ -75,6 +74,48 @@ source ~/.zshrc
 
 ## 注销用户重新登录即可使用
 ```
+## 中文字体
+
+```sh
+sudo pacman -S --noconfirm wqy-microhei && fc-cache -fv
+# 外观》字体：设置应用程序默认字体。
+# qt5设置》字体：设置qt窗体的默认字体
+
+# 其他字体选用
+sudo pacman -Sv wqy-microhei-lite wqy-bitmapfont wqy-zenhei
+sudo pacman -Sv adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts noto-fonts-cjk
+```
+
+## 卸载软件
+
+```sh
+sudo pacman -Rsnv firefox thunderbird gimp hexchat xfburn xfce4-dict catfish pidgin mousepad vlc-nightly audacious xfce4-screenshooter
+```
+
+假如因为依赖问题卸载掉系统图片管理器`ristretto`(系统自带图片浏览)，再安装即可。
+
+## 安装常用软件
+
+```sh
+# Repo软件：
+sudo pacman -Sv gvim base-devel autojump git axel tmux mpv htop mlocate goldendict shadowsocks proxychains-ng  the_silver_searcher(ag) filezilla
+
+# aur软件：
+pacaur -Sv pycharm-professional xmind typora nutstore chromium(google-chrome) deepin-screenshot electronic-wechat vsftpd(ftp服务器) gimp qbittorrent(bt搜索下载) obs-studio chmsee gpick（取色配色） peek（录屏为gif软件） deepin-terminal ieaseMusic(github) sublime-text-dev-imfix2 
+
+# 其他软件
+dbeaver:mysql等数据库连接软件
+mariadb：务必参考官网：https://wiki.archlinux.org/index.php/MySQL
+redis：redis服务器 https://wiki.archlinux.org/index.php/Redis
+mongodb mongodb-tools:MongoDB数据库相关软件 https://wiki.archlinux.org/index.php/MongoDB
+Anki:https://apps.ankiweb.net/
+zeal:离线文档查看软件
+
+# 下载软件
+yay -Sv uget aria2
+# 打开uget》编辑》设置》插件》启用aria2
+# 分类》属性》默认一般设置》最大连接数>5
+```
 
 ## 字体设置
 
@@ -104,22 +145,6 @@ plank阴影解决办法：'`Setting > Window manager Tweaks > Compositor`' and u
 pacaur -Sv lightdm-gtk-greeter # 依赖lightdm；
 systemctl enable lightdm
 systemctl start lightdm
-```
-
-## 卸载软件
-
-```sh
-sudo pacman -Rsnv firefox thunderbird gimp hexchat xfburn xfce4-dict catfish pidgin mousepad vlc-nightly audacious xfce4-screenshooter
-```
-
-假如因为依赖问题卸载掉系统图片管理器`ristretto`(系统自带图片浏览)，再安装即可。
-
-## 安装常用软件
-
-```sh
-sudo pacman -Sv gvim base-devel autojump git axel tmux mpv htop mlocate goldendict shadowsocks proxychains-ng  the_silver_searcher(ag)
-
-pacaur -Sv pycharm-professional xmind typora nutstore chromium(google-chrome) deepin-screenshot electronic-wechat vsftpd(ftp服务器) gimp qbittorrent(bt搜索下载) obs-studio chmsee gpick（取色配色） peek（录屏为gif软件） deepin-terminal ieaseMusic(github) sublime-text-dev-imfix2 
 ```
 
 ## SS启动

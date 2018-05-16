@@ -1,16 +1,22 @@
 # Redis备忘
 
-## 简介
+## 概述
+
+### 1 简介
 
 NoSQL数据库：key-value，文档型...
 
 Redis: [Remote Directory Server] 远程服务器字典。
 
-保存在内存中，读取速度快，支持持久化（周期性保存到磁盘）
+特点：速度快，持久化，多数据结构，支持多重语言驱动，功能丰富，简单，主从复制，高可用/分布式。
+
+> 存储介质：Register > L1 Cache > L2 Cache > Main Memory > Local Disk > Remote Disk
+
+应用场景：缓存系统，计数器，消息队列系统，排行榜，社交网络，实时系统
 
 **官网参考**：https://redis.io/documentation
 
-## 下载、安装、启动
+### 2 下载、安装、启动
 
 3.x   x为偶数为稳定版本，奇数为测试版本。
 
@@ -40,7 +46,7 @@ shutdown  # 在redis-cli端输入，会让服务端终止所有连接，并根�
 # 或者，直接结束redis-server进程
 ```
 
-## 命令返回值
+### 3 命令返回值
 
 1》状态回复
 
@@ -86,7 +92,23 @@ OK
 2) "name"
 ```
 
-## Redis配置选项相关内容
+6》数据库占用资源信息
+
+```sh
+127.0.0.1:6379> INFO memory
+# Memory
+used_memory:852832
+used_memory_human:832.84K
+used_memory_rss:6221824
+used_memory_rss_human:5.93M
+used_memory_peak:853808
+used_memory_peak_human:833.80K
+....
+```
+
+
+
+### 4 Redis配置选项相关内容
 
 1》动态设置/获取配置选项的值
 
@@ -124,7 +146,9 @@ dir ./  # 指定数据库文件保存目录（默认是当前目录）。
 # =======其他高级选项=====自己研究
 ```
 
-## 和Key相关命令
+## 基础命令
+
+### 1 和Key相关命令
 
 Redis 键命令用于管理 redis 的键。 
 
@@ -196,7 +220,7 @@ OK
 # 18》 其他命令：OBJECT MIGRATE SCAN SORT 后续再讲解
 ```
 
-## Redis String类型及相关命令
+### 2 Redis String类型及相关命令
 
 Redis支持五种类型：String/Hash/List/Set/Zset类型
 
@@ -305,7 +329,7 @@ OK
 "helloWorld"
 ```
 
-## Redis Hash类型及相关命令
+### 3 Redis Hash类型及相关命令
 
 Redis hash 是一个string类型的field和value的映射表，hash特别适合用于存储对象。
 
@@ -384,7 +408,7 @@ OK
 
 
 
-## Redis List类型及相关命令
+### 4 Redis List类型及相关命令
 
 Redis列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边）
 
@@ -447,7 +471,7 @@ BLPOP key [key ...] timeout  # TO为0表示阻塞时间无限大
 BLPOP myList3 0  # 会一直阻塞，知道LPUSH一个值（另外开启一个redis-cli）
 ```
 
-## Redis Set类型及相关命令
+### 5 Redis Set类型及相关命令
 
 Redis 的 Set 是 String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据。
 
@@ -490,7 +514,7 @@ SMOVE source destination member
 	#当 destination 集合已经包含 member 元素时， SMOVE 命令只是简单地将 source 集合中的 member 元素删除。
 ```
 
-## Redis Zset（Sorted Set）类型及相关命令
+### 6 Redis Zset（Sorted Set）类型及相关命令
 
 Redis 有序集合和集合一样也是string类型元素的集合,且不允许重复的成员。
 
@@ -590,9 +614,610 @@ ZINTERSTORE destination numkeys key [key ...] [WEIGHTS权重 weight weight...] [
 ZUNIONSTORE destination numkeys key [key ...] [WEIGHTS weight] [AGGREGATE SUM|MIN|MAX]
 ```
 
+## 客户端
+
+### Java客户端-jedis
+
+### Python客户端-redis-py
+
+```sh
+sudo pip install redis
+```
+
+## 瑞士军刀Redis
+
+慢查询，pipeline，发布订阅，Bitmap，HyperLogLog，GEO
+
+### 1 慢查询
+
+Redis是单线程的：多个命令需要排队，依次执行
+
+**客户端请求生命周期：**1、Client向Redis发送命令》2、命令排队以此执行》3、执行命令》4、返回结果给Client
+
+> 两点说明：1、慢查询发生在第三个阶段（执行命令）；2、客户端超时不一定慢查询，但慢查询可能是客户端超时的一个因素。
+
+**两个配置：**
+
+- slowlog-max-len :1、先进先出；2、固定长度；3、保存在内存中。
+- slowlog-log-slower-than: 1、慢查询阈值（微秒）；2、slowlog-log-slower-than=0，记录所有命令；3、slowlog-log-slower-than<0，不记录任何命令。
+
+**配置方法：**
+
+- 默认值：
+  - config get slowlog-max-len = 128
+  - config get slowlog-log-slower-than = 10000
+- 修改配置文件重启（服务器不建议）
+- 动态配置
+
+**慢查询命令：**
+
+- slowlog get [n] : 获取慢查询队列
+- slowlog len : 获取慢查询队列长度
+- slowlog reset : 清空慢查询队列
+
+**运维经验：**
+
+- slowlog-max-len不要设置过大，默认10ms，通常设置1ms；
+- slowlog-log-slower-than不要设置过小，通常设置1000左右；
+- 理解命令的生命周期；
+- 定期持久化慢查询（原因：存储在内存中）。
+
+### 2 pipeline
+
+**什么是流水线？**
+
+1次命令时间=1次网络传输时间+1次计算时间
+
+n次命令时间=n次网络传输时间+n次计算时间
+
+1次pipeline（n条命令）=1次网络传输时间+n次计算时间
+
+> redis内部计算很快（微秒级别），网络传输相对很慢。
+
+**与原生m操作的区别：**
+
+原生m操作是原子性；
+
+pipeline是非原子性，但是返回的结果是把pipeline中的命令顺序返回结果按照顺序打包后返回。
+
+**使用建议：**
+
+- 注意每次pipeline携带数据量；
+- pipeline每次只能作用在一个Redis节点上；
+- 原生M操作与pipeline的区别。
+
+### 3 发布订阅
+
+**角色：**
+
+发布者（publisher）+订阅者（subscriber）+频道（channel）
+
+**模型：**
+
+![](http://www.runoob.com/wp-content/uploads/2014/11/pubsub2.png)
+
+详细参考：http://www.runoob.com/redis/redis-pub-sub.html
+
+**API：**
+
+publish， subscribe， unsubscribe， 其他
+
+```sh
+# 发布命令
+API: publish channel message
+redis> publish sohu:tv "hello world"
+(integer) 1  # 返回订阅者数量
+# 订阅
+API: subscribe [channel] # 一个或多个
+redis> subscribe sohu:tv
+# 取消订阅
+API: unsubscribe [channel] # 一个或多个
+redis> unsubscribe sohu:tv
+# 其他
+psubscribe [pattern] # 订阅模式（如：以a开头的频道）
+punsubscribe [pattern] # 取消订阅模式
+...
+```
+
+**消息队列**
+
+发布订阅：发布者推送一条消息，订阅者全部收到；
+
+消息队列：发布者推送一条消息，订阅者只有一个能收到（抢红包）。
+
+### 4 bitmap位图
+
+`set hello big`其实`b` `i` `g`各对应一个ASCII码（总共8*3位二进制），可以使用`GITBIT hello 2`查看第三位二进制是`1`。
 
 
 
+```sh
+SETBIT unique:users:2016-07-09 5 1  # 第6位设置为1
+GETBIT unique:users:2016-07-09 5 # 获取第6位的值
+BITCOUNT key [start end] # 统计位值为1的数量
+BITOP operation destkey key [key ...]  # 将多个Bitmap做 and交、or并、not非、xor异或 操作，并保存到destkey中
+BITPOS key targetBit [start] [end]  #获取key中第一个等于targetBit的位置。
+```
+
+**应用场景：独立用户统计**
+
+![](https://i.loli.net/2018/05/15/5afa2c201f3b8.png)
+
+> 但是当只有10W个独立用户时，set占用的更少。
+
+**使用经验：**
+
+- type=string，最大512MB
+- 注意setbit时的偏移量，可能有较大耗时；
+- 位图不是绝对好；
+
+### 5 hyperloglog
+
+**做什么的？**
+
+基于hyperloglog算法：极小空间完成独立数量统计。
+
+本质还是字符串`type hyperloglog_key`。
+
+**API:**
+
+```sh
+PFADD key element [element ...]  # 向Hyperloglog添加元素
+PFCOUNT key [key ...] # 计算Hyperloglog的独立个数
+PFMERGE destkey sourcekey [sourcekey ...] #合并多个Hyperloglog
+```
+
+**内存消耗（百万独立用户）**
+
+| 1天    | 15KB         |
+| ------ | ------------ |
+| 一个月 | 450KB        |
+| 1年    | 15KB*365≈5MB |
+
+**使用经验：**
+
+- 是否能容忍错误？（错误率0.81%）
+- 是否需要单条数据（HyperLogLog不能取数据）？
+- 使用场景：只需要统计用户数量，而且允许误差。
+
+### 6 GEO
+
+**GEO是什么？**
+
+GEO（地理信息定位）：存储经纬度，计算两地距离，范围计算等。
+
+应用场景：微信摇一摇，外卖，最近美食...
+
+**API**
+
+```sh
+GEOADD key longitude latitude member [longitude latitude member ...] #添加
+GEOPOS key member [member ...] #获取地理位置
+GEODIST key member1 member2 [unit] # 计算距离（ m/km/mi/ft）
+GEORADIUS key longitude latitude radius m|km|ft|mi [WITHCOORD] [WITHDIST] [WITHHASH]...#计算范围内的地理信息集合
+```
+
+**相关说明：**
+
+- since 3.2+
+- type geoKey = zset
+- 没有删除的API
+
+## Redis持久化的取舍和选择
+
+### 1 持久化简介
+
+**啥是持久化？**
+
+redis所有数据保存在内存中，对数据的更新将异步地保存到硬盘上。
+
+**持久化方式：**
+
+快照：MySQL Dump，Rdis RDB；
+
+写日志：MySQL Binlog，Hbase Hlog Reids AOF
+
+### 2 RDB
+
+**什么是RDB？**
+
+见redis的数据以二进制RDB文件快照的方式持久化到硬盘中。
+
+`RDB` is for Redis Database File. It's the snapshot style persistence format.
+
+**触发机制-主要三种方式**
+
+save(同步)
+
+```sh
+>save #创建RDB文件,阻塞
+OK
+# 文件策略:如果存在老的rdb文件,会被新的替换
+# 复杂度:O(N)
+```
+
+bgsave(异步)
+
+```sh
+>bgsave #通过linux的fork()函数启用子进程后台创建RDB文件,fork()的阻塞情况可以忽略不计
+Backgroud saving start
+# 文件策略:如果存在老的rdb文件,会被新的替换
+# 复杂度:O(N)
+# fork()额外占用内存
+```
+
+自动
+
+>  通过配置文件自动备份,内部实现;`bgsave`.
+
+```sh
+配置文件中还可以指定如下内容
+#save  900  1  
+#save  300  10
+#save  60  1000
+dbfilename dump0-${port}rdb #备份名称
+dir /bigdiskpath #备份路径
+stop-writes-on-bgsave-error yes #出错是否终止
+rdbcompression yes  #是否压缩
+```
+
+**触发机制-不容忽略方式**
+
+1. 全量复制
+2. debug reload
+3. shutdown
+
+**RDB总结**
+
+- RDB是Redis内存到硬盘的快照,用于持久化;
+- save通常会阻塞Redis;
+- bgsave不会阻塞Redis,但是会fork()新进程(开销内存);
+- save自动配置满足任一条件就会被执行;
+- 有些触发机制不容忽视.
+
+### 3 AOF
+
+`AOF` stands for Append Only File. It's the change-log style persistent format.
+
+AOF日志文件记录所有的redis命令(回溯),恢复时,再次重复执行即可,类似于MySQL文件的恢复.
+
+**RDB现存问题**
+
+- 耗时:O(n),耗性能:fork(),I/O性能消耗;
+- 不可控,容易丢失数据(出现宕机会丢失数据).
+
+**AOF三种策略**
+
+- always
+
+写命令刷新到缓存区 > 每条命令都会fsync到硬盘(AOF文件)
+
+- everysec(实际常用,具体看使用场景)
+
+写命令刷新到缓存区 > 每秒把缓存区命令fsync到硬盘(AOF文件)
+
+- no
+
+写命令刷新到缓存区 > 又操作系统来决定何时fsync到硬盘(AOF文件)
+
+| 命令 | always                           | everysec         | no     |
+| ---- | -------------------------------- | ---------------- | ------ |
+| 优点 | 不丢失数据                       | 每秒一次fsync    | 不用管 |
+| 缺点 | IO开销大,一般sata硬盘只有几百TPS | 可能丢失1s的数据 | 不可控 |
+
+**AOF相关配置**
+
+```sh
+appendonly yes
+appendfilename "appendonly-${port}.aof"
+appendfsync everysec
+dir /bigdiskpath
+no-appendfsync-on-rewrite yes
+auto-aof-rewrite-min-size 64mb #AOF文件重写需要的尺寸
+auto-aof-rewrite-percentage 100 #AOF文件增长率(下一次什么时候重写)
+```
+
+**AOF重写**
+
+| 原生AOF(内存中实际执行的命令)                                | AOF重写                                                 |
+| ------------------------------------------------------------ | ------------------------------------------------------- |
+| set hello world<br />set hello java<br />set hello hehe<br />incr counter<br />incr counter<br />rpush mylist a<br />rpush mylist b<br />rpush mylist c<br />过期数据 | set hello hehe<br />set count 2<br />rpush mylist a b c |
+
+AOF重写的作用:1. 减少磁盘占用量; 2. 加速恢复速度.
+
+**AOF重写两种实现方式**
+
+- bgrewriteaof命令
+
+- AOF重写配置
+
+```sh
+auto-aof-rewrite-min-size #AOF文件重写需要的尺寸
+auto-aof-rewrite-percentage #AOF文件增长率(下一次什么时候重写)
+aof_current_size #当前尺寸(字节)
+aof_base_size #上次启动和重写的尺寸
+
+##触发时机(同时满足)
+# aof_current_size > auto-aof-rewrite-min-size
+# aof_current_size - aof_base_size > auto-aof-rewrite-percentage
+```
+
+**AOF重写流程**
+
+![](https://i.loli.net/2018/05/15/5afaa9ebcfc3f.png)
+
+### 4 RDB和AOF抉择
+
+**RDB和AOF比较**
+
+| 命令       | RDB    | AOF               |
+| ---------- | ------ | ----------------- |
+| 启动优先级 | 低     | 高(宕机先使用AOF) |
+| 体积       | 小     | 大                |
+| 恢复速度   | 快     | 慢                |
+| 数据安全性 | 丢数据 | 根据策略决定      |
+| 轻重       | 重     | 轻                |
+
+**RDB最佳策略**
+
+- "关"RDB?
+- 集中管理
+- 主从,从(节点)开?
+
+**AOF最佳策略**
+
+- "开":缓存和存储
+- AOF重写集中管理
+- everysec策略
+
+**最佳策略**
+
+- 小分片:
+- 缓存或者存储
+- 监控(硬盘/内存/负载/网络)
+- 足够的内存
+
+## 开发运维常见问题
+
+### 1 fork操作
+
+同步操作
+
+与内存量息息相关:内存越大,耗时越长(与机器类型有关)
+
+info:latest_fork_usec
+
+**改善fork**
+
+- 优先使用物理机or高效支持fork操作的虚拟机技术;
+- 控制Redis实例最大可用内存:maxmemory
+- 合理配置Linux内存分配策略:vm.overcommit_memory=1
+- 降低fork频率:例如放宽AOF重写自动触发时机,不必要的全量复制.
+
+### 2 子进程开销和优化
+
+**cpu:**
+
+- 开销:RDB和AOF文件生成,属于cpu密集型
+- 优化:不做cpu绑定,不和cpu密集型部署在一起
+
+**内存**
+
+- 开销:fork内存开销,copy-on-write
+- 优化:echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+**硬盘**
+
+- 开销:AOF和RDB文件写入,可以结合iostat等工具分析
+- 优化:1. 不要和高硬盘负载服务部署在一起; 2. no-appendfsync-on-rewrite = yes; 3. 根据写入量决定磁盘类型(例如ssd); 4. 单机多实例持久化文件目录可以考虑分盘.
+
+### 3 AOF追加阻塞
+
+Redis日志
+
+info Persistence
+
+通过查看硬盘的资源使用情况
+
+## Redis复制的原理和优化
+
+### 1 什么是主从复制
+
+**单机有什么问题**
+
+- 机器故障:磁盘/cpu/主板等等,高可用问题!
+- 容量瓶颈:内存的扩展,扩展性问题!
+- QPS瓶颈:
+
+**主从复制的作用**
+
+一个master,一个/多个slave.
+
+- 数据副本:高可用,分布式的基础
+- 扩展读性能
+
+### 2 主从复制配置
+
+**两种实现方式**
+
+- slaveof命令
+
+```sh
+> slaveof ip_of_master 6379  # 将本机作为master机的slave,异步
+> slaveof no one  # 切断主从关系
+```
+
+- 配置
+
+```sh
+slaveof ip port
+slave-read-only yes
+```
+
+### 3 全量复制和部分复制
+
+### 4 故障处理
+
+**自动故障转移**
+
+- master故障
+- slave故障
+- 主从复制故障转移问题
+
+### 5 开发与运维中的问题
+
+读写分离
+
+主从配置不一致
+
+规避全量复制
+
+规避复制风暴
+
+## Redis Sentinel
+
+主从复制不一定高可用,so,引出Sentinel解决.
+
+### 1 主从复制高可用?
+
+
+
+### 2 架构说明
+
+
+
+### 3 安装配置
+
+
+
+### 4 客户端连接
+
+
+
+### 5 实现原理
+
+
+
+### 6 本章回顾总结
+
+- Redis Sentinel是Redis的高可用实现方案,有如下功能:故障发现,故障自动转移,配置中心,客户端通知.
+- Redis Sentinel从Redis2.8版本才开始使用;
+- 尽可能在不同物理机上部署Redis Sentinel所有节点;
+- Redis Sentinel中的Sentinel节点个数应该为大于等于3且最好为奇数;
+- Redis Sentinel中的数据节点和普通数据节点没有区别;
+- 客户端初始化时连接的是Sentinel节点集合,不再是具体的Redis节点,但Sentinel只是配置中心不是代理;
+- Redis Sentinel通过三个定时任务实现了Sentinel节点对于主节点/从节点/其余Sentinel节点的监控;
+- Redis Sentinel在对节点做失败判定时分为主观下线和客观下线;
+- 看懂Redis Sentinel故障转移日志对于Redis Sentinel以及排查问题非常有帮助;
+- Redis Sentinel实现读写分离高可用可以依赖Sentinel节点的消息通知,获取Redis数据节点的状态变化.
+
+## Redis Cluster
+
+Redis Cluster是Redis官方提供的集群功能.
+
+### 1 为什么需要集群
+
+- 并发量:官网生成redis可以实现10W/秒,假如业务需要100W/秒呢?
+- 数据量:一般机器内存:16-256G,假如业务需要500G呢?
+
+
+
+### 2 数据分布概论
+
+
+
+### 3 搭建集群-基本架构
+
+
+
+### 4 集群伸缩
+
+
+
+### 5 客户端路由
+
+
+
+### 6 集群原理
+
+
+
+### 7 开发运维常见问题
+
+
+
+### 8 集群总结
+
+
+
+## 缓存的使用和优化
+
+### 1 缓存的收益与成本
+
+
+
+### 2 缓存的更新策略
+
+
+
+### 3 缓存粒度控制
+
+
+
+### 4 缓存穿透问题
+
+
+
+### 5 无底洞问题优化
+
+
+
+### 6 缓存雪崩优化
+
+
+
+### 7 热点key重建优化
+
+
+
+### 8 本章总结
+
+- 缓存收益:加速读写,降低后端存储负载;
+- 缓存成本:缓存和存储数据不一致性,代码维护成本,运维成本
+- 推荐结合剔除/超时/主动更新三种方案共同完成
+- 穿透问题:使用缓存空对象和布隆过滤器来解决,注意他们各自的使用场景和局限性;
+- 无底洞问题:分布式缓存中,有更多的机器不保证有更高的性能.
+- 雪崩问题:缓存层高可用/客户端降级/提前演练是解决雪崩问题的重要方法;
+- 热点key问题:互斥锁/"永远不过期"能够在一定程度上解决热点key问题,开发人员在使用时要了解他们各自的使用成本.
+
+## Redis云平台Cachecloud
+
+### 1 Redis规模化运维的引起的问题
+
+### 2 快速构建
+
+### 3 机器部署
+
+### 4 应用介入
+
+### 5 用户功能
+
+### 6 运维功能
+
+
+
+## 课程总结
+
+- Redis初识:单机安装部署(版本选择),边界(使用场景);
+- API理解和使用:单线程/5中数据结构使用和选择;
+- Redis客户端使用:jedis/redis-py等,客户端很"简单";
+- 瑞士军刀Redis:慢查询/pipeline/发布订阅/bitmap等;
+- Redis持久化:RDB和AOF的优缺点和最佳实践;
+- Redis复制:配置方法/全量和部分复制/常见运维问题;
+- Redis Sentinel:高可用/架构/"新"的客户端/基本原理;
+- Redis Cluster(**重点**):数据分布/架构/安装部署/扩容/客户端/常见问题;
+- 缓存设计与优化:粒度/更新策略/无底洞问题/穿透/雪崩/热点key.
+- CacheCloud:平台化Redis开发运维工具.
 
 
 
