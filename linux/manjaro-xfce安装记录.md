@@ -110,6 +110,7 @@ redis：redis服务器 https://wiki.archlinux.org/index.php/Redis
 mongodb mongodb-tools:MongoDB数据库相关软件 https://wiki.archlinux.org/index.php/MongoDB
 Anki:https://apps.ankiweb.net/
 zeal:离线文档查看软件
+kid3-qt:音频meta信息编辑
 
 # 下载软件
 yay -Sv uget aria2
