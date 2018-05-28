@@ -82,10 +82,10 @@ find搜索命令：强大，但是占用资源。
 语法： `find [搜索范围] [匹配条件]`
 
 ```sh
-find /etc -name init  # 只搜索文件名是init的（精准搜索）
-find /etc -name *init*  # 搜索文件名中包含init的文件
-find /etc -name init???  # init开头，后面三个字符的文件
-find /etc -iname init???  # 不区分大小写
+find /etc -name "init"  # 只搜索文件名是init的（精准搜索）
+find /etc -name "*init*"  # 搜索文件名中包含init的文件
+find /etc -name "init???"  # init开头，后面三个字符的文件
+find /etc -iname "init???"  # 不区分大小写
 find /tmp -size +/-204800（数据块=0.5K=512字节） #  空白表示等于（不常用）
 find /home -user/group yaro  # 根据所有者/组
 find /etc -amin(access访问时间)/cmin(change文件属性)/m(modify文件内容) -5  # 查看5min内（小于）被修改过的文件（夹）
