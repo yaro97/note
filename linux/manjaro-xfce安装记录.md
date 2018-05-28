@@ -111,6 +111,7 @@ mongodb mongodb-tools:MongoDB数据库相关软件 https://wiki.archlinux.org/in
 Anki:https://apps.ankiweb.net/
 zeal:离线文档查看软件
 字体:ttf-hack ttf-ms-fonts
+kid3-qt:音频meta信息编辑
 
 # 下载软件
 yay -Sv uget aria2
