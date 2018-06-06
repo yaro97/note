@@ -239,6 +239,21 @@ response = requests.get('http://www.taobao.com', proxies = proxies)
 
 **当我们需要提取的信息在html源码中，但是不在标签中，只存在与JS的相关变量中时**（今日头条-图片），就不能使用Beautifulsoup，Pyquery等解析库提取了。正则表达式就很方便了。
 
+**re 模块的常用函数**
+
+| 用途 | 函数声明                                          | 返回值           |
+| ---- | ------------------------------------------------- | ---------------- |
+| 编译 | `re.compile(pattern, flags=0)`                    | `re.RegexObject` |
+| 查找 | `re.search(pattern, string, flags=0)`             | `re.MatchObject` |
+| 查找 | `re.findall(pattern, string, flags=0)`            | `list`           |
+| 查找 | `re.finditer(pattern, string, flags=0)`           | `iterator`       |
+| 替换 | `re.sub(pattern, repl, string, count=0, flags=0)` | `string`         |
+| 分割 | `re.split(pattern, string, maxsplit=0, flags=0)`  | `list`           |
+
+其中，比较常用的是 `re.sub`、`re.split` 和 `re.findall`。
+
+`re.compile` 返回的对象 `re.RegexObject` 也支持 re 模块下的大部分函数；也就是说，你可以这样调用
+
 ```python
 import re
 content = 'price is $5.20, hahaha'  # 记得转义 $ .
@@ -252,7 +267,58 @@ result = pattern.search(content)  # 可以重复使用,节约compile时间;
 # result = re.search(pattern, conntent)
 ```
 
-总结：
+使用 `re.compile` 会提前编译给定的 RE，避免每次都重新编译；不过 Python 也没有那么蠢，它会缓存编译过的 RE。
+
+> `re.match()`的用途比较窄，一般只用来做**完全匹配**，关于它与 `re.search`，参考 [search() vs. match()](https://docs.python.org/3/library/re.html#search-vs-match)
+>
+> 因为几乎用不到它，所以最好别记住它，不然你每次都会纠结它跟 `re.search` 有什么区别。
+
+**使用示例**
+
+中文语料清洗
+
+数据格式：
+
+```python
+["text1", "text2", "text3", ...]
+```
+
+代码
+
+```python
+data = ["近日南京市下发《关于加强出租汽车市场规范管理的意见》（代拟稿），按照《意见》规定\n",
+        "Outlook 2010中新增了一个“人物窗格”（People Pane）功能，\n",
+        "Steam上已经发布了超过6800款游戏，而2016年这个数字为5028，2015年为2991款。\n"]
+
+RE_zh_en = re.compile(r"[^\u4e00-\u9fa5a-zA-Z]")
+"""匹配所有非中英文字符"""
+RE_white_space = re.compile(r"(\s)+")
+"""匹配连续的空白符"""
+
+for line in data:
+    # 把除中文、英文外的字符转为空格
+    line = RE_zh_en.sub(' ', line)
+    # 去掉首尾的空格
+    line = line.strip()
+    # 把多个空白符转空格
+    line = RE_white_space.sub(' ', line)
+    print(line)
+```
+
+具体的要做哪些处理视数据而定，
+一个复杂的例子：gensim 处理 wiki 语料
+
+处理结果
+
+```sh
+近日南京市下发 关于加强出租汽车市场规范管理的意见 代拟稿 按照 意见 规定
+Outlook 中新增了一个 人物窗格 People Pane 功能
+Steam上已经发布了超过 款游戏 而 年这个数字为 年为 款
+```
+
+数据清理后，下一步就是**分词**了，未完待续。
+
+**总结：**
 
 - 能用`字符串.Method`,尽量不用RE,比如字符串的`split()`方法,无法实现用不同的`分割符`分割,RE可以; 
 - 尽量使用泛匹配（ `.*` 代替比较长的字符）；
