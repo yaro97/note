@@ -101,7 +101,7 @@ sudo pacman -Rsnv firefox thunderbird gimp hexchat xfburn xfce4-dict catfish pid
 sudo pacman -Sv gvim base-devel autojump git axel tmux mpv htop mlocate goldendict shadowsocks proxychains-ng  the_silver_searcher(ag) filezilla
 
 # aur软件：
-pacaur -Sv pycharm-professional xmind typora nutstore chromium(google-chrome) deepin-screenshot electronic-wechat vsftpd(ftp服务器) gimp qbittorrent(bt搜索下载) obs-studio chmsee gpick（取色配色） peek（录屏为gif软件） deepin-terminal ieaseMusic(github) sublime-text-dev-imfix2 
+pacaur -Sv unzip-iconv(支持unzip的-O选项) pycharm-professional xmind typora nutstore chromium(google-chrome) deepin-screenshot electronic-wechat vsftpd(ftp服务器) gimp qbittorrent(bt搜索下载) obs-studio chmsee gpick（取色配色） peek（录屏为gif软件） deepin-terminal ieaseMusic(github) sublime-text-dev-imfix2 
 
 # 其他软件
 dbeaver:mysql等数据库连接软件
@@ -203,6 +203,8 @@ Super + T ： xfce4-terminal
 开机开启Num Lock：Settings - settings Editor - keyboards ,设置Numlock、RestoreNumlock为True。
 
 系统时间显示不对：时区显示的是上海，但是却是0000时区；解决办法：在sudo vim /etc/profile文件中添加export TZ='CST-8'  。
+
+unzip解压zip压缩文件乱码：`unzip -O CP936 zip_file_name`
 
 ## 安装QQ
 
