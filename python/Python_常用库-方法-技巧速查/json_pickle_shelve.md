@@ -4,7 +4,8 @@
 >   **序列化的目的**：把python的对象转变为**byte或str类型**，方便我们**存储、网络传输**等
 > - pickle（腌、腌制），假如我们想把python的对象存起来，就想把各种蔬菜放进坛子（jar）腌制一样，方便我们重新利用；优点：支持所有python对象（**序列化为bytes类型-不可读**）；缺点：不能与其他语言交互。
 > - shelve（搁置、放在架子上），比喻暂时不做处理；shelve模块是pickle的进一步包装（把腌制用的坛子jar放置于架子），提供一个类似于python的dict对象的API；优缺点：同pickle。
-> - json（JavaScript Object Notation）：不像pickle只能用于python自己的序列化与反序列化，json是很多语言都支持的数据类型，这样就方便我们与其他语言进行交互(传统的XML也有类似的功能，很多银行业还在使用)；**序列化为字符串-可读**；缺点：有些python对象不支持，如：class、function、tuple等，不过这些序列化的意义不大。
+> - json（JavaScript Object Notation）：不像pickle只能用于python自己的序列化与反序列化，json是很多语言都支持的数据类型，这样就方便我们与其他语言进行交互；**序列化为字符串-可读**；缺点：有些python对象不支持，如：class、function、tuple等，不过这些序列化的意义不大。
+> - xml是实现不同语言或程序之间进行数据交换的协议，跟json差不多，但json使用起来更简单，不过，古时候，在json还没诞生的黑暗年代，大家只能选择用xml呀，至今很多传统公司如金融行业的很多系统的接口还主要是xml。
 >
 > 
 
