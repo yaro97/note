@@ -263,7 +263,7 @@ findall 以列表形式返回全部能匹配的子串，如果没有匹配，则
 
 看看例子：
 
-```
+```python
 import re
  
 pattern = re.compile(r'\d+')   # 查找数字
@@ -280,6 +280,25 @@ print result2
 ['123456', '789']
 ['1', '2']
 ```
+
+**值得注意的地方：**
+
+```python
+re.findall(r"www.(baidu).com", "www.baidu.com") # 注意分组了
+# 会得到["baidu"]，findall默认识别分组为你想要的东西
+re.findall(r"www.(?:baidu).com", "www.baidu.com") # 试用了非捕捉组 ?: 
+
+re.findall("(abc)+" ,"abcabcabc")  
+>> ['abc']
+# 假如不使用(abc),无法表示(abc)作为一个整体出现1次或多次
+# 使用(abc)会匹配全部“abcabcabc”，但是只显示分组里面的东西，即abc
+# 想要显示全部匹配的内容，只能如下：
+
+re.findall("(?:abc)+" ,"abcabcabc")  # 使用括号，但是表明为非捕捉组
+>> ['abcabcabc']
+```
+
+
 
 ### finditer 方法
 
