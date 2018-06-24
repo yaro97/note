@@ -23,7 +23,8 @@ import hashlib
 
 md5 = hashlib.md5()
 md5.update('how to use md5 in python hashlib?'.encode('utf-8'))
-print(md5.hexdigest())
+print(md5.hexdigest()) #以十六进制格式显示加密信息（常用）
+print(md5.digest()) # 以二进制格式显示加密信息
 ```
 
 计算结果如下：
