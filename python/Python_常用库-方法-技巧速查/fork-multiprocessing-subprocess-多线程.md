@@ -1,4 +1,39 @@
-# fork-multiprocessing-subporcess-多线程
+# fork-multiprocessing-subporcess-多进程
+
+## 使用结论
+
+### 各多进程方式的对比/选择
+
+fork：只有linux才有，底层实现依赖它，但是太底层，使用的便捷性太低，不推荐。
+
+multiprocessing：父进程、子进程都做事，平时可以选择。
+
+Pool(n)：一般是父进程等待，子进程做事，推荐！至于子进程的数量n，需要服务器性能、压力测试...后才能确定。就像很多游客区公园划船，老板需要多少船才好呢？太多浪费，太少不够用。
+
+### 进程之间的通讯
+
+multiprocessing 创建的进程之间通过 `multiprocessing.queue`（进程queue）通讯。
+
+```python
+from multiprocessing import Queue
+q = Queue()
+```
+
+Pool创建的进程之间通过`multiprocessing.manager().Queue()`进行通讯。
+
+```python
+from multiprocessing import Manager
+q = Manager().Queue()
+```
+
+threading创建的线程通过`import queue` （线程queue）通讯。
+
+```python
+import queue
+q = queue()
+```
+
+## 概述
 
 `进程`是程序的一次动态执行过程，它对应了从代码加载、执行到执行完毕的一个完整过程。
 
@@ -287,16 +322,10 @@ Get C from queue.
 
 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所有，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。
 
-## 总结及多进程方式的选择
+## 总结
 
 在Unix/Linux下，可以使用`fork()`调用实现多进程。
 
 要实现跨平台的多进程，可以使用`multiprocessing`模块。
 
 进程间通信是通过`Queue`、`Pipes`等实现的。
-
-fork：只有linux才有，底层实现依赖它，但是太底层，使用的便捷性太低，不推荐。
-
-multiprocessing：父进程、子进程都做事，平时可以选择。
-
-Pool(n)：一般是父进程等待，子进程做事，推荐！至于子进程的数量n，需要服务器性能、压力测试...后才能确定。就像很多游客区公园划船，老板需要多少船才好呢？太多浪费，太少不够用。
