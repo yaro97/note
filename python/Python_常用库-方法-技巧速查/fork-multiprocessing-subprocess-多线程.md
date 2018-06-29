@@ -126,8 +126,8 @@ if __name__=='__main__':
     for i in range(5):
         p.apply_async(long_time_task, args=(i,))
     print('Waiting for all subprocesses done...')
-    p.close()
-    p.join()
+    p.close()  # 不允许在向pool里面添加任务
+    p.join()  # 主进程需等待pool里面的自己进程完成才结束，要是没有这句话，会不执行pool里面的子进程。
     print('All subprocesses done.')
 ```
 
@@ -287,10 +287,16 @@ Get C from queue.
 
 在Unix/Linux下，`multiprocessing`模块封装了`fork()`调用，使我们不需要关注`fork()`的细节。由于Windows没有`fork`调用，因此，`multiprocessing`需要“模拟”出`fork`的效果，父进程所有Python对象都必须通过pickle序列化再传到子进程去，所有，如果`multiprocessing`在Windows下调用失败了，要先考虑是不是pickle失败了。
 
-## 小结
+## 总结及多进程方式的选择
 
 在Unix/Linux下，可以使用`fork()`调用实现多进程。
 
 要实现跨平台的多进程，可以使用`multiprocessing`模块。
 
 进程间通信是通过`Queue`、`Pipes`等实现的。
+
+fork：只有linux才有，底层实现依赖它，但是太底层，使用的便捷性太低，不推荐。
+
+multiprocessing：父进程、子进程都做事，平时可以选择。
+
+Pool(n)：一般是父进程等待，子进程做事，推荐！至于子进程的数量n，需要服务器性能、压力测试...后才能确定。就像很多游客区公园划船，老板需要多少船才好呢？太多浪费，太少不够用。
