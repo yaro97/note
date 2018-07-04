@@ -1,5 +1,7 @@
 # Pyquery相关笔记
 
+项目参考：[WeiXin_ProxyPool](https://github.com/yaro97/spider_projects/blob/master/WeiXin_ProxyPool/main.py)
+
 参考: 
 
 [Pyquery官网](https://github.com/gawel/pyquery)
@@ -8,24 +10,39 @@
 
 [Jquery手册](https://www.w3schools.com/jquery/)
 
-> 加入你属性Jquery的话,你会使用Pyquery更自如.
+也是一个网页解析库，依赖于lxml库,熟悉jquery建议使用这个，二者语法相似,[Pyquery官网](https://pythonhosted.org/pyquery/), 全部[API](https://pythonhosted.org/pyquery/api.html)。
 
-安装: 略
+**安装:** 
+
+```python
+pip install pyquery
+```
 
 ## 加载文档的方式
 
-使用PyQuery有两种方式加载xml(html)文档:1. 字符串,  2.lxml文档(文件, URL, lxml.etree/lxml.html对象), 
+pyquery uses **lxml** for fast xml and html manipulation. 完全和Jquery同样的API，初始化方式有三种：
 
 ```python
+pip install pyquery
 from pyquery import PyQuery as pq
-from lxml import etree
-d = pq("<html></html>")  # 操字符串加载
-d = pq(etree.fromstring("<html></html>"))  # 从lxml.etree对象加载
-d = pq(url=your_url)  # 从url加载
-d = pq(your_url, headers={'user-agent': 'pyquery'})  
-d = pq(your_url, {'q': 'foo'}, method='post', verify=True)
-d = pq(url=your_url, opener=lambda url, **kw: urlopen(url).read())
-d = pq(filename=path_to_html_file)  # 从文件加载
+from lxml import etree/html  # 处理xml/html
+# lxml参考:https://www.cnblogs.com/ospider/p/5911339.html
+
+# html = html.encode('uft-8') # 可选,先使用encode('utf-8')转换成字节型字符串;
+>>> d = pq(html.fromstring(html))  # 转换成HtmlElement对象,可以使用tosring()再转变成字节型字符串,再次使用decode('utf-8')转换成Unicode字符串
+## 意义:当html有缺失/不完整时,会自动补全;
+
+# 字符串初始化
+>>> html = "<html></html>"
+>>> d = pq(html)
+
+# URL初始化
+>>> d = pq(url=your_url)
+>>> d = pq(url=your_url,
+...        opener=lambda url, **kw: urlopen(url).read())
+
+# 文件初始化
+>>> d = pq(filename=path_to_html_file)
 ```
 
 > 从上面可以看到Pyquery可以直接请求URL, 当然我还是喜欢Requests, 功能太多难免有些不专业!哈哈!!
@@ -53,12 +70,15 @@ d = pq(etree.fromstring("<html>...</html>"))
 
 ```python
 d = pq("<html><title>程序员笔记 | 分享IT教程以及相关的笔记</title></html>")
+# Now d is like the $ in jquery:
 print(d('html').html())
 print(d('title').text())
 ## 输出如下:
 # <title>程序员笔记 | 分享IT教程以及相关的笔记</title>
 # 程序员笔记 | 分享IT教程以及相关的笔记
 ```
+
+You can use some of the pseudo classes that are available in jQuery but that are not standard in css such as `:first :last :even :odd :eq :lt :gt :checked :selected :file` :
 
 ## 获取属性
 
