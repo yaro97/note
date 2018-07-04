@@ -179,57 +179,7 @@ python自带的请求库,下面的Requests是此库的包装;
 
 #### Requests库基本使用
 
-项目参考：[JiePai_ajax_re](https://github.com/yaro97/spider_projects/blob/master/JiePai_ajax_re/main.py)
-
-基于Python编写，基于urllib，采用Apache2 Licensed开源协议的HTTP库。比urllib更人性化。
-
-```python
-pip install requests
-import requests
-response = requests.get('http://www.baidu.com') # post/put/delete/head/options
-# 记得使用 http://httpbin.org 网站测试
-data = {
-'name':'bob',
-'age':22
-}
-response = requests.get('http://httpbin.org/get', params=data)
-print(response.json()) # 如果返回的是json格式字符串,可以直接转变成dict;等同于josn库里面的json.loads(response.text)
-print(response.status_code)
-print(response.text)
-print(response.content)  # 返回二进制的数据,图片/多媒体等
-print(response.cookies)  # 还有url/history/属性
-
-# 写入多媒体文件
-with open('test.jpg', 'wb') as f:
-f.write(response.content)
-
-# 添加headers
-headers = {........}
-response = requests.get('https://www.zhihu.com/explore', headers = headers)
-
-# post请求
-data = {'name':'bob', 'age': '22'}
-headers = {........}
-response = requests.post('http://httpbin.org', data = data, headers = headers)
-
-# 文件上传
-files = {'file':open('test.jpg', 'rb')}
-response = requests.post('http://httpbin.org',file=files)
-
-# 获取cookies
-response = requests.get('http://www.baidu.com')
-for key, value in response.cookies.items():
-print(key + '=' + value)
-
-# 会话维持
-# 证书验证
-# 代理设置
-proxies = {'http':'http://127.0.0.1:9743', 'https':'https://127.0.0.1:9744'}
-response = requests.get('http://www.taobao.com', proxies = proxies)
-# 超时设置
-# 认证设置
-# 异常处理
-```
+见《requests.md》
 
 #### Re 正则表达式
 
