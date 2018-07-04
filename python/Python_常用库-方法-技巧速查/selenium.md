@@ -1,5 +1,131 @@
 # selenium-爬虫-总结
 
+## 快速开始
+
+项目参考：[TaoBaoGoods_selenium](https://github.com/yaro97/spider_projects/tree/master/TaoBaoGoods_selenium)
+
+主要用来驱动浏览器，用作自动化测试；在做爬虫是会遇到JS渲染的网页，用requests请求无法获取相应的请求内容；
+
+此时，我们可以使用selenium来实现：用selenium库可以直接驱动浏览器，用浏览器执行JS的渲染，得到的结果便是渲染之后的结果，我们便可以拿到渲染之后的内容。
+
+假如使用调用Chrome()对象(浏览器)的话，需要安装对应[chromedrive](https://sites.google.com/a/chromium.org/chromedriver/)。
+
+```python
+pip install selenium
+from selenium import webdriver
+browser = webdriver.Chrome()  # PhantomJS/Firefox/Edge/Safari
+tyr:
+browser.get('http://www.baidu.com')
+input = browser.find_element_by_id('kw')
+input.send_keys('Python')
+input.send_keys(Kyes.ENTER)
+wait = WebDriverWait(browser, 10)
+# wait.until(EC.presence_of_element_located((By.ID, 'content_left'))
+print(browser.current_url)
+print(browser.get_cookies())
+print(browser.page_source)
+finally:
+browser.close()
+
+## 查找元素（貌似都是取得page_source后，用解析库获取）
+browser.find_element_by_id('q')
+browser.find_element_by_name('q')
+browser.find_element_by_xpath('q')
+browser.find_element_by_css_selector('q')
+browser.find_element_by_link_text('q')
+browser.find_element_by_tag_name('q')
+browser.find_element_by_class_name('q')
+# 上面只是查找单个元素，想要查找多个元素，需要使用 elements 
+
+## 元素交互操作
+from selenium import webdriver
+import time
+browser = webdriver.Chrome()
+browser.get('https://www.taobao.com')
+input = browser.find_element_by_id('q')
+input.send_keys('iPad')
+time.sleep(1)
+input.clear()
+input.send_keys('iPhone')
+button = browser.find_element_by_class_name('btn-serach')
+button.click()
+# 更多api参考： http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.remote.webelement
+
+## 交互动作
+from selenium import webdriver
+from selenium.webdriver import ActionCharins
+browser = webdriver.Chrome()
+url = 'http://www.runoob.com/try/try.php?filename=jquery-api-deroppable'
+browser.get(url)
+browser.switch_to_frame('iframeResult')
+source = browser.find_element_by_css_selector('#draggable')
+target = browser.find_element_by_css_selector('#droppable')
+actions = ActionChains(browser)
+actions.drag_and_drop(source, target)
+actions.perform()
+# 更多api参考： http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.common.action_chains
+
+## 执行JS
+from selenium import webdriver
+browser = webdriver.Chrome()
+browser.get('https://www.zhihu.com/explore')
+browser.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+browser.execute_script('alert("To Bottom)')
+
+## 获取元素信息
+logo = browser.find_element_by_id('zh-top-lnk-logo')
+logo.get_attribute('class')  # 获取属性
+input = browser.find_element_by_class_name('zu-top-add-question')
+input.text  # 获取文本值，还可以获取 id/location/tag_name/size
+
+## Frame 相当于一个单独的网页，需要先
+browser.sitch_to_frame('iframeResult')  # 需要先切换到特定id的frame
+
+## 等待
+browser.implicitly_wait(10)  # 隐式等待没有必要
+# 显式等待
+from selenium.webdrive.common.by import By
+from selenium.webdrive.support.ui import WebDriverWait
+from selenium.webdrive.support import expected_conditions as EC
+browser = webdriver.Chrome()
+browser.get('https://www.taobao.com/')
+wait = WebDriverWait(browser, 10)
+input = wait.until(EC.presence_of_element_located((By.Id, 'q')))
+button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'btn-search')))
+# 更多api参考： http://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.support.expected_conditions
+
+## 前进后退
+browser.get('https://www.taobao.com/')
+browser.get('https://www.baidu.com/')
+browser.get('https://www.python.org/')
+browser.back()
+time.sleep(1)
+browser.forward()
+browser.close()
+
+## Cookies
+browser.get_cookies()
+browser.add_cookie({'name':'bob',...})
+browser.delete_all_cookies()
+
+## 选项卡管理
+browser.get('http://www.taobao.com')
+browser.execute_script('window.open()')
+print(browser.window_handles)
+browser.switch_to_window(browser.window_handles[1])
+browser.get('http://www.baidu.com')
+
+## 异常处理（比较多，需要的时候查看官方文档）
+browser.find_element_by_id('hello')  # 查找一个不存在的元素
+# 以上会报错 NoSuchElementException
+try:
+browser.find_element_by_id('hello')
+except NoSuchElementException:
+print('No Element')
+finally:
+browser.close()
+```
+
 ## selenium概述
 
 Selenium 是自动化测试工具。它支持各种浏览器，包括 Chrome，Safari，Firefox ，PhantomJS等浏览器。
