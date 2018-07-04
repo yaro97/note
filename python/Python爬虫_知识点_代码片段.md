@@ -70,41 +70,39 @@ pickle.dump(d, f)  # 到文件
 
 [Docker相关](https://github.com/yaro97/note/tree/master/docker)
 
-## 5、爬虫基础
+## 5、基本概念Q&A
 
-### 5.1、基本概念Q&A
+### 爬虫是什么？
 
-#### 爬虫是什么？
+### **请求**网站并**提取**数据的**自动化**程序
 
-**请求**网站并**提取**数据的**自动化**程序
-
-#### 爬虫基本过程
+### 爬虫基本过程
 
 1. 发起请求：通过HTTP库向目标站点发起请求，即发送一个Request，请求可以包含额外headers等信息，等待服务器响应。
 2. 获取相应内容：如果服务器能正常相应，会返回一个Response给客户端（HTTP库），Response的内容便是所要获取的页面内容，类型可能有HTML、Json字符串（XHR：XML Http Request对象，ajax的核心技术）、二进制数据（eg：图片视频）等类型。
 3. 解析内容：得到的内容可能是HTML，可以用正则表达式、网页解析库进行解析；可能是Json，可以直接转为Json对象（dict）解析；可能是二进制数据，可以做存储或者进一步的处理。
 4. 保存数据：保存形式多样，可以存为文本；也可以保存至数据库；或者保存特定格式的文件（图片）。
 
-#### Request & Response
+### Request & Response
 
 1. HTTP Request：浏览器发送信息给服务器。
 2. HTTP Response：服务器收到浏览器发送的信息后，能够根据浏览器发送消息的内容，做出相应的处理，然后把消息回传给浏览器。
 3. 浏览器收到服务器的Response信息后，会对信息进行相应的处理，然后展示。
 
-#### Request中包含了什么？
+### Request中包含了什么？
 
 1. 请求URL：URL统一资源定位符，如：一个网页稳定、一张图片、一个视频等都可以用URL唯一来确定。
 2. 请求方式：主要有GET、POST两种类型，另外还有HEAD、PUT、DELETE、OPTIONS等。
 3. 请求头：包含请求时的头部信息，如User-Agent、Host、Cookies等信息。
 4. 请求体：请求时额外携带的数据，GET请求时不会有内容，只有POST请求是才会有，如表单提交时的表单数据。
 
-#### Response中包含了什么？
+### Response中包含了什么？
 
 1. 相应状态：200=成功，301跳转，404=找不到页面，500+（502、503...）=服务器错误等。
 2. 响应头：如内容类型、内容长度、服务器信息、设置Cookie等。
 3. 响应体：最主要的部分，包含了请求资源的内容，如网页HTML、图片二进制数据等。
 
-#### 爬虫能抓取什么数据？
+### 爬虫能抓取什么数据？
 
 1. 网页文本：HTML文档、Json格式文本（ajax）等。
 2. 图片：获取图片的二进制文件，保存为图片格式。
@@ -121,7 +119,7 @@ with open('/home/yaro/Download/1.png', 'wb') as f:
  f.close()  # 可以省略
 ```
 
-#### 怎样解析处理？
+### 怎样解析处理？
 
 1. 直接处理：返回的是最简单的字符串。
 2. Json解析（ajax）：返回的是json格式的字符串。
@@ -130,12 +128,12 @@ with open('/home/yaro/Download/1.png', 'wb') as f:
 5. PyQuery解析库：API 同 JQuery
 6. XPath解析库：Built-in
 
-#### `ctrl+u`与`inspect-Elements中`区别？
+### `ctrl+u`与`inspect-Elements中`区别？
 
 - 拿`m.weibo.com` 举例，在请求时首先返回最初的doc（dom）html框架，然后里面有很多JS；后台会通过ajax请求返回数据，然后用JS“填充至”原html中。
 - 我们请求的结果与“浏览源代码（ctrl + u）”是一致的。
 
-#### 怎么解决上面JS渲染导致的问题？
+### 怎么解决上面JS渲染导致的问题？
 
 由于我们想要的结果不在请求返回的结果中,我们需要分析Ajax或者使用JS渲染工具;
 
@@ -152,16 +150,16 @@ print(driver.page_source)  # 这个数据是不可能用请求库拿到的数据
 - Splash库：也是模拟JS渲染的。
 - PyV8、Ghost.py等其他库来模拟加载
 
-#### 怎么数据持久化（存储）？
+### 怎么数据持久化（存储）？
 
 1. 文本：纯文本、Json、Xml等。
 2. 关系型数据库：如MySQL、Oracle、SQL Server等具有结构化表结构形式存储。
 3. 如MongoDB、Redis等Key-Value形式存储。
 4. 二进制文件：图片、视频、音频等直接保存成特定的格式即可。
 
-### 5.2、爬虫常用库/工具
+## 6、爬虫常用库/工具
 
-#### 工具总览
+### 工具总览
 
 爬虫使用到的python库的有：请求库、解析库、存储库、工具库；
 
@@ -173,15 +171,15 @@ print(driver.page_source)  # 这个数据是不可能用请求库拿到的数据
 
 常用工具：ipython, jupyter, RE, Json, Chrome, Phantomjs, Mysql, MongoDB, Redis, Sublime_text, Pycharm等
 
-#### Urllib库基本使用
+### Urllib库基本使用
 
 python自带的请求库,下面的Requests是此库的包装;
 
-#### Requests库基本使用
+### Requests库基本使用
 
 见《requests.md》
 
-#### Re 正则表达式
+### Re 正则表达式
 
 项目参考：[MaoYan100_re](https://github.com/yaro97/spider_projects/blob/master/MaoYan100_re/main.py)
 
@@ -281,7 +279,7 @@ Steam上已经发布了超过 款游戏 而 年这个数字为 年为 款
 - re.sub('(\d+)', r'\1 Replacement', content) 可以实现在源字符串后面追加, `\1` 别是前面的分组`(\d+)`;
 - 习惯使用`res = re.compile(pattern, re.S), res.search('content')`,在重复compile时,比`re.search(pattern, content)`更高效;
 
-#### Lxml - xpath解析库
+### Lxml - xpath解析库
 
 详细见《xml.md》
 
@@ -299,19 +297,19 @@ result = html.xpath('//title/text()')[0] #可以对html使用xpath方法进行�
 
 > 有时我们由于网络问题造成安装库困难的话，我们可以通过如下方法解决：1、google相应的库名，进入pypi.python.org相应的库页面，下载.whl文件（前提需要安装wheel库），然后用 `pip install whl文件路径` 安装即可 ；2、使用国内的相关镜像
 
-#### PyQuery详解
+### PyQuery详解
 
 略，详细见《pyquery.md》
 
-#### Beautifulsoup4
+### Beautifulsoup4
 
 略，详细见《beautifulsoup4.md》
 
-#### Selenium详解
+### Selenium详解
 
 略，详细见《selenium.md》
 
-#### Pymysql - 连接Mysql
+### Pymysql - 连接Mysql
 
 用于操作mysql数据库; python2使用`mysql-python`库；在python3中使用`pymysql`代替。
 
@@ -324,7 +322,7 @@ cursor.execute('select * from db')  # 调用一些函数执行sql语句
 cursor.fetchone()  # 使用fetchone方法拿到数据库的内容
 ```
 
-#### Pymongo - 连接MongoDB
+### Pymongo - 连接MongoDB
 
 项目参考：[TaoBaoGoods_selenium](https://github.com/yaro97/spider_projects/blob/master/TaoBaoGoods_selenium/main.py)
 
@@ -340,7 +338,7 @@ db['table'].insert({'name':'Bob'})  # 调用db声明一个表名,并插入一条
 db['table'].find_one({'name':'Bob'})  # 数据的查询
 ```
 
-#### Redis - 连接Redis
+### Redis - 连接Redis
 
 也是非关系型数据库，也是key:value形式存储的。主要应用于后面的分布式爬虫、维护一个爬取队列，运行效率比较高，用它维护一个公共爬取队列，效果比较好。
 
@@ -352,7 +350,7 @@ r.set('name', 'Bob')  # 插入数据
 r.get('name')  # 获取数据
 ```
 
-#### Phantomjs - 无界面浏览器
+### Phantomjs - 无界面浏览器
 
 项目参考：[TaoBaoGoods_selenium](https://github.com/yaro97/spider_projects/blob/master/TaoBaoGoods_selenium/main.py)
 
@@ -371,7 +369,7 @@ driver = webdriver.PhantomJS()
 driver.page_source  # 同Chrome
 ```
 
-#### Flask - 简单web框架
+### Flask - 简单web框架
 
 是一个web库，后面的代理设置（代理的获取、存储）会用到。
 
@@ -379,7 +377,7 @@ driver.page_source  # 同Chrome
 pip install flask  # 依赖的库比较多
 ```
 
-#### Django - 强大web框架
+### Django - 强大web框架
 
 是一个web服务器框架，提供了完整的后台管理，提供了模板引擎、接口、路由等。可以使用django做一个完整的网站。后面的分布式爬虫维护时会用到。
 
@@ -387,7 +385,7 @@ pip install flask  # 依赖的库比较多
 pip install django  # 依赖的库比较多
 ```
 
-#### Jupyter - python记事本
+### Jupyter - python记事本
 
 运行在网页端的记事本，可以调试命令，支持mk语法。
 
@@ -396,7 +394,7 @@ pip install jupyter  # 依赖的库比较多
 jupyter notebook  
 ```
 
-#### MongoDB环境配置
+### MongoDB环境配置
 
 windows建议使用--install添加服务，GUI数据查看建议使用robo3t;
 
@@ -408,7 +406,7 @@ show dbs;
 db.test.insert({'a':'b'})
 ```
 
-#### Redis环境配置
+### Redis环境配置
 
 内存中的NoSQL数据库,高效,后面分布式爬虫会用到;
 
@@ -429,7 +427,7 @@ redis-cli -a foobar # 使用密码登陆
 
 修改配置文件：取消限制只有本地连接，添加密码
 
-#### MySQL环境配置
+### MySQL环境配置
 
 可以使用MariaDB代替;
 
@@ -441,7 +439,7 @@ mysql -uroot -p
 
 win下GUI管理工具：Navicat/MySQL Front等等。
 
-#### 各工具的效率/选择的思考
+### 各工具的效率/选择的思考
 
 解析库中，Pyquery和Beautifulsoup4都是基于Lxml库的，网上很多人证明Lxml库的效率更高!
 
@@ -459,7 +457,7 @@ win下GUI管理工具：Navicat/MySQL Front等等。
 
 So，请求库/解析库的效率真的是你特别需要解决的么？ 相信你已经有了答案!😄
 
-## 5、Scrapy框架
+## 7、Scrapy框架
 
 略，详情见《scrapy.md》
 
