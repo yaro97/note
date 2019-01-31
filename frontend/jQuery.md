@@ -142,7 +142,7 @@ window.onload = function () {
         });
         ```
 
-### `$` 的本质
+### `###  的本质
 
 - `$` 就是jQuery的简写,  其实就是一个函数名,所以后面记得跟小括号 `$()`
 - `$` 的参数不同,功能就不同:
@@ -151,6 +151,8 @@ window.onload = function () {
 	3. 参考是`字符串` -->`定位jQuery对象`;
 
 ## jQuery选择/过滤器-遍历
+
+> 请参考 [jQuery cheatsheet](https://oscarotero.com/jquery/)
 
 ### 概述
 
@@ -568,8 +570,751 @@ From <<https://oscarotero.com/jquery/>>
 From <https://oscarotero.com/jquery/> 
 
 ## jQuery动画
+
+### 三对基本对话
+
+- 三对基本动画
+    - Basics--修改宽/高
+        [.hide()](https://api.jquery.com/hide/)
+        [.show()](https://api.jquery.com/show/)
+        [.toggle()](https://api.jquery.com/toggle/)
+    - Fading--修改capacity
+        [.fadeIn()](https://api.jquery.com/fadeIn/)
+        [.fadeOut()](https://api.jquery.com/fadeOut/)
+        [.fadeTo()](https://api.jquery.com/fadeTo/)
+        [.fadeToggle()](https://api.jquery.com/fadeToggle/)
+    - Sliding--修改高
+        [.slideDown()](https://api.jquery.com/slideDown/)
+        [.slideToggle()](https://api.jquery.com/slideToggle/)
+        [.slideUp()](https://api.jquery.com/slideUp/)
+- 参数:
+	- 空 : 默认速度 normal
+	- 参数一:控制动画速度
+		- 字符串: slow --600ms; normal --400ms; fast --200ms
+		- 数字: 1000 -- ms
+	- 参数二: 回调函数,动画执行完后执行的函数(如:下一个动画)
+- 案例:
+	- 下拉菜单
+
+    ```js
+    $(function () {
+    //mouseover：鼠标经过事件
+    //mouseout:鼠标离开事件
+    //mouseenter:鼠标进入事件
+    //mouseleave：鼠标离开事件
+    var $li = $(".wrap>ul>li");
+    //给li注册鼠标经过事件，让自己的ul显示出来
+    $li.mouseenter(function () {
+            //找到所有的儿子，并且还得是ul
+            //stop：停止当前正在执行的动画
+            $(this).children("ul").stop().slideDown();
+        });
+        $li.mouseleave(function () {
+            $(this).children("ul").stop().slideUp();
+        });
+    });
+    ```
+
+	- 京东轮播图
+
+    ```js
+    $(function () {
+        var count = 0;
+        $(".arrow-right").click(function () {
+            count++;
+            if(count == $(".slider li").length){
+                count = 0;
+            }
+            console.log(count);
+            //让count渐渐的显示，其他兄弟渐渐的隐藏
+            $(".slider li").eq(count).fadeIn().siblings("li").fadeOut();
+    });
+    
+    $(".arrow-left").click(function () {
+            count--;
+            if(count == -1){
+                count = $(".slider li").length - 1;
+            }
+            console.log(count);
+            //让count渐渐的显示，其他兄弟渐渐的隐藏
+            $(".slider li").eq(count).fadeIn().siblings("li").fadeOut();
+        })
+    });
+    ```
+
+### 自定义动画
+
+- 类似于自己封装的动画函数,但是更强大
+- 语法:   .animate( properties [, duration ] [, easing ] [, complete ] )
+- 使用如下: 
+
+    ```js
+    $(function () {
+        $("input").eq(0).click(function () {
+            //第一个参数：对象，里面可以传需要动画的样式
+            //第二个参数：speed 动画的执行时间
+            //第三个参数：动画的执行效果
+            //第四个参数：回调函数
+            
+            //默认:swing
+            $("#box1").animate({left:800}, 8000);
+            
+            //swing:秋千 摇摆 慢->快->慢
+            $("#box2").animate({left:800}, 8000, "swing");
+            
+            //linear:线性 匀速
+            $("#box3").animate({left:800}, 8000, "linear", function () {
+            console.log("hahaha");
+            });
+        })
+    });
+    ```
+
+### delay方法
+
+delay方法用于在两个动画之间插入时间间隔,让两个动画之间有一定的等待时间;
+
+```js
+$(function () {
+    //显示2000ms之后再消失
+    $("div").fadeIn(1000).delay(2000).fadeOut(1000);
+});
+```
+
+### 动画队列
+
+- 动画队列
+    - 对话队列描述 -- 如下图:
+
+        ```js
+        $(function () {
+        $("#btn").click(function () {
+                //把这些动画存储到一个动画队列里面
+                $("div").animate({left: 800})
+                .animate({top: 400})
+                .animate({width: 300,height: 300})
+                .animate({top: 0})
+                .animate({left: 0})
+                .animate({width: 100,height: 100})
+                })
+        });
+        ```
+
+    > 为一个对象添加了6个动画,这些动画会存放在一个队列(queue)中, 依次执行.
+
+    - 动画队列的优缺点:
+        - 优点: 为一个对象添加的多个动画不会丢失,以此有顺序的执行;
+        - 缺点:为一个对象添加多个动画, 如何用户多次触发这个动画的话, 动画会"慢慢地依次执行很久".
+
+- stop方法
+    - stop方法作用: 用于停止`当前对象`的`当前正在执行`的动画;
+    - 使用: 在特定的动画前面调用stop()方法即可 `$("input").stop().animate()` ;
+    - 参数:
+        - clearQueue(false): 是否清除动画队列 true false
+        - jumpToEnd(false): 是否跳转到当前动画的最终效果 true false
+
 ## jQuery节点操作
+
+### 创建节点
+
+```js
+var $li = $('<a href="http://www.baidu.cn">百度</a>');
+```
+### clone节点
+
+- clone方法可以克隆节点;
+	- 默认值为false --> 深拷贝: 克隆标签和里面的所有内容
+    - 如果设置为true -->还拷贝绑定的事件;
+
+### 添加节点
+
+- 用法
+
+    ```js
+    //添加到子元素的最后面
+    $("div").append($("p"));
+    $("p").appendTo("div"); //比上面更方便
+    //添加到子元素的最前面
+    $("div").prepend($("p"));
+    $("p").prependTo("div"); //比上面更方便
+    //添加到元素的前面后面(兄弟)
+    $('div').after($("p"));
+    $("p").insertAfter("div") //比上面更方便
+    //添加到元素的前面前面(兄弟)
+    $('div').before($("p"));
+    $("p").insertBefore("div") //比上面更方便
+    ```
+
+- 案例 -- 城市选择
+
+    ```js
+    $(function () {
+        $("#btn1").click(function () {
+            $("#src-city>option").appendTo("#tar-city");
+        });
+        $("#btn2").click(function () {
+            $("#src-city").append($("#tar-city>option"));
+        });
+        $("#btn3").click(function () {
+            $("#src-city>option:selected").appendTo("#tar-city");
+        });
+        $("#btn4").click(function () {
+            $("#src-city").append($("#tar-city>option:selected"));
+        });
+    });
+    ```
+
+- 案例 -- 微博发布
+
+    ```js
+    $(function () {
+        $("#btn").click(function () {
+            if ($("#txt").val().trim().length == 0) {
+                return;
+            }
+            //就是文本框的值
+            $("<li></li>").text($("#txt").val()).prependTo("#ul");
+            $("#txt").val("");
+        })
+    });
+    ```
+
+### html/text
+
+获取第一个元素, 或设置所有元素的html/text内容
+
+### 删除节点
+
+1. empty方法: 把`所选元素的子元素清空` 
+    `$("div").empty();`
+2. remove方法: 把`所选元素全部删除`
+    `$("div").remove();`
+3. detach方法: The .detach() method is the same as .remove(), except that .detach() keeps all jQuery data associated with the removed elements. This method is useful when removed elements are to be reinserted into the DOM at a later time.
+4. html方法: `不推荐 <-- 内存泄漏` --  只是里面的内容删除了, 绑定的事件等并没有处理. 一直占用内存(泄漏).
+
 ## jQuery特殊属性操作
+
+### val
+
+> 说明: `大部分特殊属性也可以使用attr方法获取/设置`. 但是,使用特殊的方法会更方便.
+
+- `val()`方法: 
+    - 操作`表单(input, select and textarea)`的元素的值习惯性用val方法. 
+	- 使用方式: 
+        - 获取 - 不传参
+        - 设置 - 传参
+	- 案例: 京东搜索框
+
+        ```js
+        $("#txt").focus(function () {
+            //如果是默认值，清空内容
+            if($(this).val() === "洋酒"){
+                $(this).val("");
+            }
+        });
+        
+        $("#txt").blur(function () {
+            if($(this).val() === ""){
+                $(this).val("洋酒");
+            }
+        });
+        ```
+
+### html/text
+
+- html方法相当于innerHTML text方法相当于innerText
+- 区别：
+	- html方法会识别html标签;
+	- text方法会那内容直接当成字符串，并不会识别html标签。
+
+```js
+//设置内容
+$(“div”).html(“<span>这是一段内容</span>”);
+//获取内容
+$(“div”).html()
+
+//设置内容
+$(“div”).text(“<span>这是一段内容</span>”);
+//获取内容
+$(“div”).text()
+```
+
+### width/height相关
+
+二者用于: 设置或者获取高度
+
+```js
+console.log($("div").width()); //width
+console.log($("div").innerWidth());//padding+width
+console.log($("div").outerWidth());//padding+width+border
+console.log($("div").outerWidth(true));//padding+width+border+margin
+
+//带参数表示设置高度
+$(“img”).height(200);
+//不带参数获取高度
+$(“img”).height();
+//获取网页可视区宽度
+$(window).width();
+//获取网页可视区高度
+$(window).height();
+
+//需要获取页面可视区的宽度和高度
+$(window).resize(function () {
+        console.log($(window).width());
+        console.log($(window).height());
+});
+```
+
+### scrollTop/scrollLeft方法
+
+- 设置或者获取垂直滚动条的位置
+
+    ```js
+    $(function () {
+        $(window).scroll(function () {
+            console.log($(window).scrollTop());
+            console.log($(window).scrollLeft());
+        });
+    });
+    ```
+
+- 【案例：仿腾讯固定菜单栏案例】
+
+    ```js
+    $(function () {
+        $(window).scroll(function () {
+            //判断卷去的高度超过topPart的高度
+            //1. 让navBar有固定定位
+            //2. 让mainPart有一个marginTop
+            if ($(window).scrollTop() >= $(".top").height()) {
+                $(".nav").addClass("fixed");
+                $(".main").css("marginTop", $(".nav").height() + 10);
+            } else {
+                $(".nav").removeClass("fixed");
+                $(".main").css("marginTop", 10);
+            }
+        });
+    });
+    ```
+
+- 【案例：小火箭返航案例】
+
+    ```js
+    //当页面超出去1000px的时候，让小火箭显示出来,如果小于1000，就让小火箭隐藏
+    $(window).scroll(function () {
+        if ($(window).scrollTop() >= 1000) {
+            $(".actGotop").stop().fadeIn(1000);
+        } else {
+            $(".actGotop").stop().fadeOut(1000);
+        }
+    });
+
+    /* //为什么使用 $("html,body") 获取对象
+    function getScroll(){
+        return {
+            left:window.pageYOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+            top:window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        }
+    } */
+
+    //在外面注册
+    $(".actGotop").click(function () {
+        $("html,body").stop().animate({scrollTop:0},3000);//3s缓慢到顶部
+        // $(window).scrollTop(0);//立刻到顶部
+        })
+    });
+    ```
+
+### offset/position方法
+
+```js
+//获取元素的相对于document的位置
+console.log($(".son").offset());
+//获取元素相对于有定位的父元素的位置
+console.log($(".son").position());
+```
+
 ## jQuery事件机制
+
+### jQuery事件发展历程
+
+> JavaScript中已经学习过了事件，但是jQuery对JavaScript事件进行了封装，增加并扩展了事件处理机制。jQuery不仅提供了更加优雅的事件处理语法，而且极大的增强了事件的处理能力。
+
+jQuery事件的进化流程: `简单事件绑定>>bind事件绑定>>delegate事件绑定>>on事件绑定(推荐)`
+
+1. 简单事件绑定
+
+- 优点: 使用方便--直接使用对应的方法即可,如: 
+	- `click(handler)`-->单击事件
+	- `mouseenter(handler)`-->鼠标进入事件
+	- `mouseleave(handler)`-->鼠标离开事件
+- 缺点：不能同时注册多个事件
+
+2. bind方式注册事件
+
+- 优点: 可以同时绑定多个事件:
+	- 第一个参数：事件类型
+	- 第二个参数：事件处理程序
+
+    ```js
+    //多个事件->一个处理函数
+    $("p").bind("click mouseenter", function () {//});
+
+    //多个事件->多个处理函数
+    $("p").bind({
+        click: function () {// },
+        mouseenter: function () {//}
+    });
+    ```
+
+- 缺点：不支持动态事件绑定(给div里面通过js新添加一个p,p不会有事件)
+
+3. delegate注册委托事件
+
+- 原理: 委托事件是通过事件冒泡实现的,p虽然没有注册事件,但是点击p会冒泡到父元素div,div注册了事件
+- 给`父元素注册delegate委托事件，最终事件(click mouseenter等)还是有子元素`来执行。
+	- 第一个参数：selector，要绑定事件的元素
+	- 第二个参数：事件类型
+	- 第三个参数：事件处理函数
+- 优点:能为动态添加到子对象添加事件; 如果有很多个子元素,只需要注册一次,消耗低;
+- 缺点:只能注册委托事件,简单的事件不行; --> 接口不统一
+
+    ```js
+    //要给div注册一个委托事件,但是最终不是由执行，而是有p执行
+    //1. 动态创建的也能有事件 :缺点：只能注册委托事件
+    $("#box").delegate("p", "click", function () {
+        //alert("呵呵");
+        console.log(this);
+    });
+    ```
+
+4. on注册事件(进化的最终产物)
+
+见下节->
+
+### on方法事件注册
+
+- on注册事件->`最终版`
+    - jQuery1.7之后，jQuery用on统一了所有事件的处理方法。
+    - 最现代的方式，兼容zepto(移动端类似jQuery的一个库)，强烈建议使用。
+    - on方法语法: `$(selector).on(events[,selector][,data],handler)`;
+        - 第一个参数：`events`，绑定事件的名称可以是由空格分隔的多个事件（标准事件或者自定义事件）
+        - 第二个参数：`selector`, 执行事件的后代元素（可选），如果没有后代元素，那么事件将有自己执行。
+        - 第三个参数：`data`，传递给处理函数的数据，事件触发的时候通过event.data来使用（不常使用）
+        - 第四个参数：`handler`，事件处理函数
+    - 既可以注册简单事件,又可以注册委托事件:
+        - on注册简单事件--`无selector参数`
+
+            ```js
+            $("#btn").on("click", function () {
+                    $("<p>我是新建的p元素</p>").appendTo("div");
+            });
+            ```
+
+        - on注册委托事件--`有selector参数`
+
+            ```js
+            $("div").on("click", "p", function () {
+                    alert("呵呵")
+            });
+            ```
+
+- 事件的执行顺序
+    - 事件的执行顺序如下: 
+        - 自身直接注册的简单事件
+        - 父元素委派的事件
+        - 父级元素直接注册的事件(<--冒泡)
+
+        ```js
+        //结构: div>p
+        // 这个是p自己注册的事件（简单事件）--第一执行
+        $("p").on("click", function () {
+            alert("呵呵哒");
+        });
+
+        //给div自己执行的 第三执行
+        $("div").on("click", function () {
+            alert("呜呜呜");
+        });
+
+        //给div里面的p执行 委托事件 --第二执行
+        $("div").on("click", "p", function () {
+            alert("嘿嘿嘿")
+        });
+        ```
+
+### 事件解绑
+
+- unbind方式（不用）	
+    - $(selector).unbind(); //解绑所有的事件
+    - $(selector).unbind("click"); //解绑指定的事件
+		undelegate方式（不用）	
+    - $(selector).undelegate(); //解绑所有的delegate事件
+    - $(selector).undelegate( “click” ); //解绑所有的click事件
+		off方式（`推荐`）	
+    - `$(selector).off()`;  // 解绑匹配元素的所有事件
+    - `$(selector).off("click")`;  // 解绑匹配元素的click事件
+
+### 触发事件
+
+事件的触发有两种方式
+
+```js
+//toggle：切换 trigger：触发
+$("#btn").on("click",function () {
+    //触发p元素的点击事件
+    $("p").click();//方式一
+    $("p").trigger("click");//方式二
+});
+```
+
+### 事件对象
+
+- jQuery事件对象其实就是js事件对象的一个封装，处理了兼容性。
+	- screenX和screenY 对应屏幕最左上角的值
+	- clientX和clientY 距离页面左上角的位置（忽视滚动条）
+	- pageX和pageY 距离页面最顶部的左上角的位置（会计算滚动条的距离）
+	
+	- event.keyCode 按下的键盘代码
+	- event.data 存储绑定事件时传递的附加数据
+	
+	- event.stopPropagation() 阻止事件冒泡行为
+	- event.preventDefault() 阻止浏览器默认行为
+	- return false:既能阻止事件冒泡，又能阻止浏览器默认行为。
+- event.data解释
+
+    ```js
+    //100，注册的时候的时候，把100传到事件里面去。
+    var money = 100;
+    var di = {
+        "name": "yaro",
+        "age": 12
+    };
+    //on(types, selector, data, callback)
+    //使用on方法的时候，可以给data参数传一个值，可以在事件里面通过e.data获取到。
+    $("div").on("click", di, function (e) {
+        console.log(e);
+        console.log("哈哈，我有" + e.data);
+    });
+    ```
+
+- 案例-钢琴版导航（加强）
+
+    ```js
+    //按下1-9这几个数字键，能触发对应的mouseenter事件
+    $(document).on("keydown", function (e) {
+        if(flag) {
+            flag = false;
+            //获取到按下的键
+            var code = e.keyCode;
+            if(code >= 49 && code <= 57){
+                //触发对应的li的mouseenter事件
+                $(".nav li").eq(code - 49).mouseenter();
+            }
+        }
+    });
+
+    $(document).on("keyup", function (e) {
+        flag = true;
+        //获取到按下的键
+        var code = e.keyCode;
+        if(code >= 49 && code <= 57){
+            //触发对应的li的mouseenter事件
+            $(".nav li").eq(code - 49).mouseleave();
+        }
+    });
+    ```
+
 ## jQuery知识点补充
+
+### 链式编程
+
+- 通常情况下,"设置"操作返回jQuery对象,可以链式编程;
+- 而"获取"操作,会返回获取到的相应的值,无法返回jQuery对象,故不能链式编程;
+- end()方法;
+	- jQuery链式编程中,每次事件主体(对象)的改变,都会把前一个的对象保存下来prevObj;
+	- 通过end()方法,可以切换到前一个对象,方便继续链式编程。
+- 【案例：五角星评分案例.html】
+
+    ```html
+    <script src="jquery-1.12.4.js"></script>
+    <script>
+    $(function () {
+        //1. 给li注册鼠标经过事件，让自己和前面所有的兄弟都变成实心
+        var wjx_k = "☆";
+        var wjx_s = "★";
+        $(".comment>li").on("mouseenter", function () {
+            $(this).text(wjx_s).prevAll().text(wjx_s);
+            console.log($(this).text(wjx_s).prevAll().text(wjx_s));
+            console.dir($(this).text(wjx_s).prevAll().text(wjx_s));
+            $(this).nextAll().text(wjx_k);
+        });
+        
+        //2. 给ul注册鼠标离开时间，让所有的li都变成空心
+        $(".comment").on("mouseleave", function () {
+            $(this).children().text(wjx_k);
+            //再做一件事件，找到current，让current和current前面的变成实心就行。
+            $("li.current").text(wjx_s).prevAll().text(wjx_s);
+        });
+        
+        //3. 给li注册点击事件
+        $(".comment>li").on("click", function () {
+            $(this).addClass("current").siblings().removeClass("current");
+        });
+    });
+    </script>
+
+    <ul class="comment">
+        <li>☆</li>
+        <li>☆</li>
+        <li>☆</li>
+        <li>☆</li>
+        <li>☆</li>
+    </ul>
+    ```
+
+### each方法
+
+- jQuery的隐式迭代会对所有的DOM对象设置相同的值，但是如果我们需要给每一个对象设置不同的值的时候，就需要自己进行迭代了。
+- 可以手动的通过for循环来遍历/设置(jQuery对象本质上就是DOM对象集合--伪数组);
+- jQuery内置的each方法也可以实现遍历jQuery对象集合,为每个匹配的元素执行一个函数.
+- 语法: $(selector).each(function(index,element){});
+	- 参数一: 表示当前元素在所有匹配元素中的索引号
+	- 参数二: 表示当前元素（DOM对象）
+	- `JS的数组方法中的foreach的参数刚好和这个反过来foreach(function(element,index)`;
+
+    ```js
+    $(function () {
+        //for循环--遍历
+        for (var i = 0; i < $("li").length; i++) {
+            $("li").eq(i).css("opacity", (i + 1) / 10);
+        }
+        //each方法--遍历
+        $("li").each(function (index, element) {
+            $(element).css("opacity", (index + 1) / 10);
+        })
+    });
+    ```
+
+### 多库共存
+
+加入$符与别的JS库中的特点标识冲突,可以释放$符,或者重新命名.
+
+```js
+//释放$的控制权,可以使用"本体"--jQuery
+$.noConflict();
+jQuery(function () {});
+
+//也可以自己制定特定的标识符
+var my$ = $.noConflict();
+my$(function () {});
+```
+
 ## jQuery插件
+
+> 背景:   • 插件：jquery不可能包含所有的功能，我们可以通过插件扩展jquery的功能。  • jQuery有着丰富的插件，使用这些插件能给jQuery提供一些额外的功能。
+
+### jquery.color.js插件
+
+- jQuery的animate动画不支持颜色的渐变，但是使用了jquery.color.js后，就可以支持颜色的渐变了。
+- 使用插件的步骤:
+	1. 引入jQuery文件
+	2. 引入插件（如果有用到css的话，需要引入css）
+    3. 使用插件
+
+### jquery.lazyload.js插件
+
+- 使用场景: 加入一个页面很多屏,而且很多图片, 就没有必要一次性全部加载,只加载当前屏即可.
+- 官网: https://github.com/tuupola/jquery_lazyload
+
+```js
+<img class="lazy" data-original="02.gif" alt="">
+
+$(function () {
+    $("img.lazy").lazyload();
+});
+```
+
+### jquery.ui.js插件
+
+- jQueryUI专指由jQuery官方维护的UI方向的插件。
+- 官方API：http://api.jqueryui.com/category/all/
+- 其他教程：jQueryUI教程
+- 基本使用:
+	1. 引入jQueryUI的样式文件
+	2. 引入jQuery
+	3. 引入jQueryUI的js文件
+	4. 使用jQueryUI功能
+- 使用jquery.ui.js实现新闻模块的案例
+
+    ```js
+    $(function () {
+        $(".drag-wrapper").draggable({
+            handle:".drag-bar"
+        });
+        $(".sort-item").sortable({
+            opacity:0.3
+        });
+        $(".resize-item").resizable({
+            handles:"s"
+        });
+    });
+    ```
+
+### 制作jquery插件
+
+- 原理：jquery插件其实说白了就是给jquery原型对象增加一个新的方法，让jquery对象拥有某一个功能。
+- jQuery的原型对象prototype的别名为fn --> 更方便书写; 
+- 返回this便可以实现链式编程: 
+
+    ```js
+    $.fn.bgColor = function (color) {
+        //this是一个jq对象
+        this.css("backgroundColor", color);
+        return this;
+    };
+    ```
+
+- 方法: 通过给$.fn添加方法就能够扩展jquery对象
+
+    ```js
+    $.fn. pluginName = function() {};
+    ```
+
+- 制作手风琴插件
+
+    ```js
+    $.fn.accordion = function (colors, width) {
+        colors = colors || [];
+        width = width || 0;
+        
+        var $li = this.find("li");
+        var boxLength = this.width();
+        var maxLength = boxLength - ($li.length - 1) * width;
+        var avgLength = boxLength / $li.length;
+        
+        //更改li的颜色
+        $li.each(function (i, e) {
+            $(e).css("backgroundColor", colors[i]);
+        });
+        
+        //给li注册鼠标经过事件
+        $li.on("mouseenter", function () {
+            $(this).stop().animate({width: maxLength}).siblings().stop().animate({width: width})
+        });
+        
+        $li.on("mouseleave", function () {
+            $li.stop().animate({width: avgLength});
+        });
+    };
+
+    //插件测试
+    <script src="jquery-1.12.4.js"></script>
+    <script src="jquery.accordion.js"></script>
+    <script>
+    $(function () {
+        var colors = ["red","yellow","green", "cyan", "pink","hotpink", "blue", "yellowgreen","greenyellow", "skyblue"];
+        $("#box").accordion(colors, 20);
+    });
+    </script>
+    ```
