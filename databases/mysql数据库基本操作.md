@@ -78,10 +78,10 @@ DROP TABLE ic_course; #删除一个表格
 
 ```mysql
 # 插入所有所有属性对应的值，字符串必须用单引号包裹；
-INSERT INTO 表名称 VALUES（值1，值2，...）;
+INSERT INTO 表名称 VALUES(值1，值2，...);
 
 # 或者只插入某些属性
-INSERT INTO(列1，列2) 表名称 VALUES(值1，值2);
+INSERT INTO 表名称(列1，列2) VALUES(值1，值2);
 ```
 
 ### 查询数据
@@ -157,7 +157,7 @@ mysql默认只有root用户，用户的信息保存在mysql数据库（不要随
 
 ```mysql
 CREATE USER 用户名 IDENTIFIED BY '密码';
-CREATE USER yaro IDENTIFIED BY 'happy1314';
+CREATE USER yaro IDENTIFIED BY 'password';
 # 新用户创建后是不能登陆的，因为没有设置权限
 
 # 使用如下命令可以查看创建的新用户
@@ -210,10 +210,10 @@ mysql通过GRANT授予权限，REVOKE撤销权限；
 GRANT ALL PRIVILEGES ON 层级 TO 用户名@主机 IDENTIFIED BY 密码;
 
 # 如：授予yaro用户全局级(*.* 第一个星号代表数据库，第二个星号代表表)全部权限
-GRANT ALL PRIVILEGES ON *.* TO 'yaro'@'%' IDENTIFIED BY 'happy1314';
+GRANT ALL PRIVILEGES ON *.* TO 'yaro'@'%' IDENTIFIED BY 'password';
 
 # 如：授权yaro用户针对于yaro_db数据库的全部权限；
-GRANT ALL PRIVILEGES ON yaro_db.* TO 'yaro'@'%' IDENTIFIED BY 'happy1314';
+GRANT ALL PRIVILEGES ON yaro_db.* TO 'yaro'@'%' IDENTIFIED BY 'password';
 ```
 
 ### 删除权限REVOKE
@@ -231,13 +231,13 @@ REVOKE ALL PRIVILEGES FROM yaro;
 
 >注意,`%`不包含`localhost`;
 
-一般我们都是创建一个数据库,给它他个特定的用户管理,root用户权限太大;而且root用户默认不能远程登陆(只能本机连接),需要授权`GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'happy1314';`;但是不安全;
+一般我们都是创建一个数据库,给它他个特定的用户管理,root用户权限太大;而且root用户默认不能远程登陆(只能本机连接),需要授权`GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password';`;但是不安全;
 如:
 
 ```mysql
 CREATE DATABASE yaro_db;
-CREATE USER yaro IDENTIFIED BY 'happy1314';
-GRANT ALL PRIVILEGES ON yaro_db.* TO 'yaro'@'%' IDENTIFIED BY 'happy1314';
+CREATE USER yaro IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON yaro_db.* TO 'yaro'@'%' IDENTIFIED BY 'password';
 ```
 
 ## mysql简单的备份恢复
