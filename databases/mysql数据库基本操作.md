@@ -46,7 +46,7 @@ SHOW TABLES; #查看当前数据库有哪些表格；
 
 #创建ic_course表，（需要保存课程名称、课程长度、课程讲师、课程分类）：
 CREATE TABLE ic_course(
-    id int,
+    id int primary key autoincrement,
     course_name varchar(50),
     course_length int(10), #可以不设置10
     teacher varchar(50),
