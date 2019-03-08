@@ -5721,3 +5721,527 @@ db = SQLAlchemy()
             return render_template('index.html')
     api.add_resource(ListView,'/list/',endpoint='list')
     ```
+
+# Memcached缓存系统
+
+## 概述
+
+更多内容参考[runoob](http://www.runoob.com/memcached/memcached-tutorial.html)或官网
+
+memcached之前是danga的一个项目，最早是为LiveJournal服务的，当初设计师为了加速LiveJournal访问速度而开发的，后来被很多大型项目采用。官网是www.danga.com或者是memcached.org
+
+Memcached是一个高性能的分布式的内存对象缓存系统，全世界有不少公司采用这个缓存项目来构建大负载的网站，来分担数据库的压力。Memcached是通过在内存里维护一个巨大的hash表，memcached能存储各种各样的数据，包括图像、视频、文件、以及数据库检索的结果等。
+
+简单的说就是将数据从数据库调用到内存中，然后从内存中读取，从而大大提高读取速度; 
+
+特点: 读取速度高效, 已丢失.
+
+使用场景:存储验证码(图形验证码，短信验证码)、登录session等`访问频繁`但不是`至关重要`的数据。
+
+## 安装/启动
+
+可以从[官网](https://memcached.org/)或者/[runoob](http://www.runoob.com/memcached/window-install-memcached.html)下载;
+
+- 简单使用
+
+    ```sh
+    # 需要添加的 PATH 或 切换到目录
+    安装到服务:memcached -d install
+    启动:memcached -d start
+    停止:memcached -d stop
+    删除服务:memcached -d uninstall
+    查看帮助: memcached -h
+
+    /bin/memcached -d start # 后台启动
+    ```
+
+- 可能出现的问题:
+    - 提示没有权限:使用管理员权限
+    - 不要放在含有中文的路径下面
+    - 提示缺少pthreadGC2.dll文件；将缺少文件拷贝到windows/System32中
+
+
+- 使用参数启动memcached
+
+    ```sh
+    -u:指定用户启动
+    -d:让memcached在后台运行(daemon)
+    -m:指定占用多少内存，以n为单位，默认为64M
+    -p:指定占用的端口。默认的端口是11211
+    -l:别的机器可以通过哪个ip地址链接到这台服务器。想要别的机器链接，就必须配置'-l 0.0.0.0'
+    ```
+
+## 使用telnet连接/操作Memcached
+
+- 连接telnet
+    ```sh
+    # telnet ip地址 端口号
+    telnet 127.0.0.1 11211
+    ```
+
+- 设置set
+    ```sh
+    set key 0 60 7
+    value
+    # 需要两行: 上面是key,下面是value; 
+    # key后面的三个值分别是: 0(否)(是否压缩) timeout(过期时间-秒) value_length(字符串的长度)
+    # 如果key已经存在会更新value
+    ```
+
+- 添加add
+    ```sh
+    add key 0 60 7
+    value
+    # 用法同set 
+    # 与set的区别: 如果key已经存在会报错
+    ```
+
+- 获取get
+    ```sh
+    get key_name
+    ```
+
+- 删除delete/flush_all
+    ```sh
+    delete key_name # 删除指定的key对应的数据
+    flush_all # 删除所有数据
+    ```
+
+- 自增incr
+    ```sh
+    # 设置age 为18
+    set age 0 120 2
+    18 
+    # 自增 2
+    incr age 2 # 18+2=20
+    # 必须都是数值类型,否则报错
+    ```
+
+- 自减decr
+    ```sh
+    # 设置age 为18
+    set age 0 120 2
+    18 
+    # 自减 2
+    decr age 2 # 18-2=16
+    # 必须都是数值类型,否则报错
+    ```
+
+- 查看状态stats
+    ```sh
+    stats # 查看当前Memcached状态.
+    # 相关数据说明如下:
+        # - get_hists:get命令命中了多少次
+        # - get_misses:get命令get空了几次, 结合上一个命令可以计算命中率
+        # - curr_items:当前memcached中的键值对的个数
+        # - total_connections:从memcached开启到现在总共的连接数
+        # - curr_connections:当前memcached的连接数
+        # - memcached默认醉的连接数是1024
+    ```
+
+## 使用python连接/操作Memcached
+
+- 安装包: `pip install python-memcached`
+- 连接:
+    ```python
+    mc = memcache.Client(["127.0.0.1:11211"],debug=True) # 连接指定的数据库
+    mc = memcache.Client(["127.0.0.1:11211", "127.0.0.1:11211"],debug=True) # 连接两个数据库
+    # Memcached是分布式的, 可以同时连接位于不同位置多个数据库;
+    # 数据在存储(set)时, 会自动按照一定的算法, 自动存储到这几个数据库中.
+    ```
+- 设置数据:
+    ```python
+    mc.set(key="name",val="angle",time=60)
+    mc.set(key="name",val="angle",time=60,min_compress_len=5)
+
+    # 设置多个值
+    mc.set_multi({'title':r'小红帽','content':r'没有内容'},time=100)
+    ```
+- 获取数据 :`mc.get('title')`
+- 删除数据: `mc.delete('name')`
+- 自增: `mc.incr('age',delta=10) # 默认 +1 `
+- 自减: `mc.decr('age',delta=10)`
+
+```python
+import memcache
+
+# 连接
+# 设置debug为true可以显示错误信息
+# 在连接之前，要启动memcached服务
+mc = memcache.Client(["127.0.0.1:11211"],debug=True)
+
+# 设置
+# time=0，永远不会过期
+# key:键
+# value:值
+# mc.set(key="name",val="angle",time=60,min_compress_len=5)
+
+# 设置多个值
+# mc.set_multi({'title':r'小红帽','content':r'没有内容'},time=100)
+
+# # 获取
+# # print(mc.get("title"))
+# username = mc.get('username')
+# print(mc.get('username'))
+#
+# # 删除
+# mc.delete('username')
+# print(mc.get('username'))
+
+# 默认自增加一,delta属性设置增加值
+mc.incr('age',delta=10)
+age = mc.get('age')
+print(age)
+
+# 自减少
+mc.decr('age',delta=10)
+age = mc.get('age')
+print(age)
+```
+
+## Memcached安全相关
+
+memccached 的操作不需要任何用户名和密码，只需要知道'memcached'服务器的ip地址和端口号即可。因此'memcached'使用的时候尤其注意它的安全性。这里听两种安全的解决方法。
+
+- 使用'-l'参数只允许指定的ip可以连接;
+- 使用防火墙，通过端口/ip等控制;
+
+# Redis
+
+## 概述
+
+Redis是一种nosql数据库, 也是运行在内存中的. 同时redis可以定时把内存数据持久化到磁盘; 并且它比Memcached支持更多的数据结构(string, list, set, sorted set, hash). 更多请参考官网.
+
+与memcached的区别如下:
+- redis与memcached相比，比仅支持简单的key-value数据类型，同时还提供list,set,zset,hash等数据结构的存储；
+- redis支持数据的备份，即master-slave模式的数据备份；
+- redis支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用等等，
+
+![redis-memcached.png](https://i.loli.net/2019/03/06/5c7f8864f36e0.png)
+
+> 总的来看，Redis比Memcached的功能多很多，实现也更复杂。 不过Memcached更专注于保存key-value数据（这已经能满足大多数使用场景了），而Redis提供更丰富的数据结构及其他的一些功能。不能说Redis比Memcached好，只是从源码阅读的角度来看，Redis的价值或许更大一点。
+
+redis使用场景:
+- 登录会话存储: 与memcached相比,数据不会丢失;
+- 排行版/计数器: 比如一些秀场类的项目,经常会有一些前多少名的主播排行.还有一些文章阅读量技术, 或者新浪微博的点赞树.
+- 作为消息队列: 比如 celery(异步) 就是使用redis作为中间人;
+- 当前在线人数: 还是之前的秀场类例子,会显示当前系统有多少在线人数;
+- 一些常用的数据缓存: 比如我们的BBS论坛, 板块不会经常变化, 但是每次访问首页都要从mysql中获取帖子,可以缓存在redis中, 这样就不用每次都请求mysql数据库.
+- 把前200篇文章/评论缓存: 一般易用浏览网站, 之后浏览前面一部分文章或者评论, 那么可以把前面200篇文章和对应的评论缓存起来.用户访问额外的文章,再访问数据库.
+- 好友关系: 微博的好友关系可以使用redis实现;
+- 发布和订阅功能: 可以用来做聊天软件;
+
+## 其他内容
+
+Redis其他相关内容,参考`数据库 - Redis.md`单独介绍.
+
+# Flask和Ajax补充
+
+传统的提交表单都是使用表单默认的提交功能, 但是这样需要等待服务器数据, 在等待的过程中,页面会处于`卡死`状态; 如果使用Ajax异步提交表单就要优雅的多.
+
+> `button`标签如果在`form`标签中, 会自动添加`submit`属性.
+
+```python
+# app.py - 后端
+from flask import Flask,render_template,request,redirect,url_for,jsonify
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return '这是首页！'
+
+@app.route('/login/',methods=['GET','POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        # 和前端约定好，发送网络请求，不管用户名和密码是否验证成功
+        # 我都返回同样格式的json对象给你
+        # {"code":200,"message":""}
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if username == 'zhiliao' and password == '111111':
+            return jsonify({"code":200,"message":""})
+        else:
+            return jsonify({"code":401,"message":"用户名或密码错误！"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+```html
+<!-- static/login.html - 前端 -->
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#submit-btn").click(function (event) {
+            // event.preventDefault：阻止按钮的默认行为
+            event.preventDefault();
+            var usernameInput = $('input[name="username"]');
+            var username = usernameInput.val();
+            var passwordInput = $("input[name='password']");
+            var password = passwordInput.val();
+            $.post({
+                'url': '/login/',
+                'data': {
+                    'username': username,
+                    'password': password
+                },
+                "success": function(data){
+                    if(data['code'] == 200){
+                        window.location = '/'
+                    }else{
+                        var message = data['message'];
+                        $("#message-p").html(message);
+                        $("#message-p").show();
+                    }
+                    console.log(data);
+                },
+                'fail': function (error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+
+<form action="" method="POST">
+    <table>
+        <tr>
+            <td>用户名：</td>
+            <td><input type="text" name="username"></td>
+        </tr>
+        <tr>
+            <td>密码：</td>
+            <td><input type="password" name="password"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button id="submit-btn" class="submit-btn">立即登录</button></td>
+        </tr>
+    </table>
+    <p style="display:none;color:red;" id="message-p"></p>
+</form>
+```
+
+# Python Web开发核心技术/网站项目部署
+
+参考:[Flask部署笔记](https://dwz.cn/MxfHUfv7); [Django部署笔记](https://www.cnblogs.com/0bug/p/9297479.html); 更多请搜索: `Flask+uWSGI+Nginx 部署笔记`
+
+> - web服务器：负责处理http请求，响应静态文件，常见的有Apache，Nginx以及微软的IIS.
+> - 应用服务器：负责处理逻辑的服务器。比如php、python的代码，是不能直接通过nginx这种web服务器来处理的，只能通过应用服务器来处理，常见的应用服务器有uwsgi、tomcat等。
+> - web应用框架：一般使用某种语言，封装了常用的web功能的框架就是web应用框架，flask、Django以及Java中的SSH(Structs2+Spring3+Hibernate3)框架都是web应用框架。
+
+
+部署flask项目，我们一般使用uwsgi+nginx+supervisor的模式，以下对这些软件之间的关系进行解释：
+- nginx：一个http服务器，用来接收用户的请求。
+- uwsgi：用来处理python代码的应用服务器。
+- supervisor：这个不是必须的，但是为了让我们的网站运行更加稳定，在出现uwsgi异常退出的时候，supervisor可以让这个服务马上起来。即作为守护进程使用。
+
+> 网站服务器的首先使用Nginx处理浏览器发过来的http请求, 如果是静态文件(html/js/css/图片...)便直接返回; 如果是动态的逻辑(最近发布的n篇帖子)就需要uwsgi把任务分发给Flask/Django等程序处理.Flask/Django处理完成后,再把数据返回给uwsgi, 然后返回给Nginx,最后返回给浏览器;
+
+## 开发机上备份项目
+
+- 确认项目没有bug
+- 备份python开发环境: 用'pip freeze > requiements.txt'将当前环境的包导出到'requirements.txt'文件中; 或者使用pipenv工具...
+- 备份项目到`git服务器`(方便服务器的代码拉取): 可以使用国内的`码云`或`Coding.net`等代码托管平台.步骤如下:
+
+    ```sh
+    git init # 本地创建git项目
+
+    #在`码云`上新建一个私有项目
+
+    git remote add origin xxx.git # 把本地项目关联到`码云`项目的origin分支
+    git add # 把本地项目添加到缓存区
+    git commit -m "first commit" # 把本地项目添加到本repo
+    git pull origin master --allow-unrelated-histories # pull码云的到本地repo, 并与本地的合并
+    git push origin master # 推送到`码云`
+    ```
+
+## 服务器上clone/测试项目
+
+- 安装相关工具: python/git/Mysql(MariaDB), ubuntu系统还需要安装`apt install libmysqld-dev`软件库
+- 创建/恢复python虚拟环境(开发机已备份):`pip install -r requirements.txt`或者`pipenv install`
+- 从`git服务器`恢复代码:
+    ```sh
+    # 进入预设的网站目录
+    git init # 本地初始化
+    git remote add origin xxx.git # 关联远程
+    git pull origin master # 拉取到本地
+    ```
+- 恢复数据库:
+    - 进入Mysql数据库, 创建与项目对应的数据库: `CREATE DATABASE XXX`;
+    - 切换到项目目录,通过命令将迁移文件映射到数据库,创建相应的表: `python manage.py migrate`, 并查看相应`表`是否创建成功;
+- Django项目的相关设置:
+    - 设置`DEBUG=False`, 避免:如果网站报错,会将错误信息暴露给用户;
+    - 设置`ALLOW_HOST`: `ALLOW_HOST = ['www.paotime.com', 'paotime.com', '服务器ip地址']`;
+    - 设置Djaongo中`settings.py`中的时区: `TIME_ZONE = 'Asia/Shanghai'`,`USE_TZ = False`;
+- 收集静态文件: 首先设置`settings.py`中的`STATIC_ROOT=os.path.join(BASE_DIR, 'static_dist')`;然后运行`python manage.py collectstatic`; 收集静态文件的目的是: 方便后面Nginx可以到这个文件夹中直接查找/处理静态文件,而不需要在访问Django/uwsgi;
+- 在服务器测试运行网站:`python manage.py runserver 0.0.0.0`, 客户端通过`http://服务器ip:8000/`访问网站所有页面;
+
+## 使用uwsgi部署项目
+
+Flask/Django自带的测试服务器性能一般,这是就需要uwsgi分发动态请求给Flask;  **浏览器 <-> uwsgi <-> Flask/Django**
+
+uwsgi是一个python编写的应用服务器, 非静态文件的网络请求(需要python书写逻辑)就必须通过它完成, 它也可以处理静态文件请求, 但这不是它的强项(需要引入Nginx). 
+
+- 安装: `pip install uwsgi`(全局安装-需要配合Nginx)
+- 使用uwsgi运行Flask项目: `uwsgi --http :8000 --wsgi-file /opt/mysite/mysite.py -callable app -H virtualenvs/xx-env`(分别为:端口/wsgi文件/主文件/虚拟环境路径);
+- 然后在浏览器中输入`http://ip_address:8000/`可以访问到flask项目的首页。
+
+> 如果配合Nginx使用还需要指定socket相关信息: `uwsgi --socket mysite.sock --wsgi-file /opt/mysite/mysite.py --callable app -H /home/xiaotuo/py2-env --chmod-socket=666`
+
+以上命令比较长，而且不容易记忆，因此uwsgi提供了一种使用配置文件的方式运行uwsgi，配置文件（假如名字是：xxx.ini）如下,然后通过命令`uwsgi --ini xxx.ini`启动项目;(配置文件如下,更多格式请百度)
+
+```ini
+[uwsgi]
+# 当前这个项目的路径
+chdir           = /opt/mysite
+# 模块
+module          = mysite
+# python的虚拟环境
+home            = /home/xiaotuo/py2-env
+# 是否启用mater模式
+master          = true
+# 进程数
+processes       = 10
+# socket文件地址
+socket          = /opt/mysite/xt_site.sock
+# wsgi文件
+wsgi-file       = /opt/mysite/wsgi.py
+# wsgi文件中的app变量
+callable        = app
+# socket文件的权限
+chmod-socket    = 666
+```
+
+示例：
+```ini
+[uwsgi]
+chdir           = /opt/mysite
+home            = /home/xiaotuo/py2-env
+module          = mysite
+master          = true
+processes       = 10
+socket          = /opt/mysite/mysite.sock
+wsgi-file       = /opt/mysite/mysite.py
+callable        = app
+chmod-socket    = 666
+```
+
+## 使用Nginx+uwsgi部署项目
+
+上一节说过: uwsgi处理静态文件请求并不是强项,这就需要引入Nginx来处理静态请求, 并分发动态请求给uwsgi;
+
+Nginx是一个web服务器, 用来加载静态文件和接受http请求. 可以在一个服务器上处理多个网站(通过配置中`server`监听的端口分发请求).
+
+原理: nginx处理浏览器发来的请求, 如果是静态请求, 自己直接处理; 如果是动态请求,则通过`sock`文件(**Nginx会自动创建**)转发给uwsgi处理(nginx和uwsgi的配置文件中需要设置相同的socket文件目录).  **浏览器 <-> Nginx <-> socket <-> uwsgi <-> Flask/Django**
+
+Nginx与uwsgi之间使用`socket`通讯(**http请求底层也是用socket实现, socket更高效**), 在Nginx配置文件中可以指定`静态文件目录`和`uwsgi相关`的配置. 
+
+- 安装: `apt install nginx`
+- 常用命令:
+    ```sh
+    systemctl start nginx # 默认是80端口
+    systemctl stop nginx
+    systemctl restart nginx
+    systemctl enable nginx
+    systemctl disable nginx
+    ```
+- 项目部署: 1. 启动nginx`systemctl start nginx`; 2. 启动uwsgi`uwsgi --ini xxx.ini`; 3. 通过浏览器访问80端口`http://xxx:80`.
+
+- Nginx配置如下: 更多请单独学习;
+    ```conf
+    # /etc/nginx/conf.d
+
+    # 配置nginx与uwsgi的通信方式和名称，mysite就是名称
+    upstream mysite {    
+        # nginx使用socket的方式与uwsgi进行通信
+        # 这里指向你项目的目录下的socket文件，
+        # 这个socket文件不需要单独创建，在运行的时候会自动创建。
+        server unix:///opt/mysite/mysite.sock; 
+    }
+    # 配置服务器
+    server {    
+        # 监听的端口号
+        listen      80;    
+        # 域名或者本机的ip地址
+        server_name .example.com; 
+        charset     utf-8;    
+        # 最大的上传大小
+        client_max_body_size 75M;   # adjust to taste
+
+        # 静态文件访问的url
+        location /static {
+            # 静态文件地址
+            alias /srv/zhiliaoketang/static_dist; 
+        }
+
+        # 最后，发送所有非静态文件请求配置
+        location / {        
+            # 指定访问哪个upstream
+            uwsgi_pass  mysite;        
+            # 包括uwsgi参数的文件
+            include     /path/to/your/mysite/uwsgi_params;
+        }
+    }
+    ```
+
+## 使用supervisor管理uwsgi进程
+
+> 在linux或者unix操作系统中，守护进程（Daemon）是一种运行在后台的特殊进程，它独立于`控制终端`并且周期性的执行某种任务或等待处理某些发生的事件。守护进程不会因`控制终端`被关闭的而关闭。守护进程常常在系统引导装入时启动，在系统关闭时终止。
+> Linux的后台进程运行有好几种方法，例如nohup，screen等，但是，如果是一个服务程序，要可靠地在后台运行，我们就需要把它做成daemon，最好还能监控进程状态，在意外结束时能自动重启。supervisor就是用Python开发的一套通用的进程管理程序，能将一个普通的命令行进程变为后台daemon，并监控进程状态，异常退出时能自动重启。
+> Supervisor可以同时启动多个应用，更重要的是，当某个应用Crash的时候，它可以自动重启该应用，保证可用性.
+
+让supervisor管理uwsgi, 可以在uwsgi发生意外的情况下, 会自动重启. 而Nginx本身就是守护进程,故不需要supervisor管理;
+
+- 安装: 系统级别安装`pip install supervisor`(而不是虚拟环境)
+- 配置文件(`supervisor.conf`):
+    ```conf
+    # 为supervisor的管理的程序起个名字
+    [program:mysite]
+    # supervisor执行的命令
+    command=uwsgi --ini mysite_uwsgi.ini
+    # 项目的目录
+    directory = /opt/mysite 
+    # 开始的时候等待多少秒
+    startsecs=0
+    # 停止的时候等待多少秒
+    stopwaitsecs=0# 自动开始
+    autostart=true
+    # 程序挂了后自动重启
+    autorestart=true
+    # 输出的log文件
+    stdout_logfile=/opt/mysite/log/supervisord.log
+    # 输出的错误文件
+    stderr_logfile=/opt/mysite/log/supervisord.err
+
+    [supervisord]
+    # log的级别
+    loglevel=info
+
+    [inet_http_server]  # supervisord的服务器设置
+    port = :9001
+    username = admin
+    password = 123
+
+    [supervisorctl] # supervisorctl客户端配置,需同服务端一致
+    serverurl = http://127.0.0.1:9001
+    username = admin
+    password = 123
+
+    [rpcinterface:supervisor] # 官网建议加上
+    supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+    ```
+- 通过supervisor运行uwsgi: `supervisord -c supervisor.conf`
+- 进入交互界面,本地管理supervisorctl: `supervisorctl -c supervisor.conf`:
+    - help # 查看supervisorctl交互界面所有命令
+    - status    # 查看状态
+    - start program_name # 启动程序
+    - restart program_name # 重新启动程序
+    - stop program_name # 停止程序
+    - reload # 重新加载配置文件
+    - quit # 退出当前的客户端
+- 也可以通过浏览器远程操作supervisorctl: `http://192.168.1.104:9001`
